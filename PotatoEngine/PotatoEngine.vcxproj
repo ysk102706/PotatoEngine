@@ -137,6 +137,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainEngine.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ResourceLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D11Utils.h" />
@@ -158,6 +159,10 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ResourceLoader.h" />
+    <None Include="Shader.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

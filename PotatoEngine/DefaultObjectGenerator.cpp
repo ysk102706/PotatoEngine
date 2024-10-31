@@ -52,22 +52,22 @@ namespace Engine {
         normal.push_back(Vector3(0.0f, 1.0f, 0.0f));
         normal.push_back(Vector3(0.0f, 1.0f, 0.0f));
         normal.push_back(Vector3(0.0f, 1.0f, 0.0f));
+        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(0.0f, 0.0f));
         tex.push_back(Vector2(1.0f, 0.0f));
-        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(1.0f, 1.0f));
 
         pos.push_back(Vector3(-1.0f, -1.0f, 1.0f) * scale);
-        pos.push_back(Vector3(-1.0f, 1.0f, 1.0f) * scale);
-        pos.push_back(Vector3(1.0f, 1.0f, 1.0f) * scale);
+        pos.push_back(Vector3(-1.0f, -1.0f, -1.0f) * scale);
+        pos.push_back(Vector3(1.0f, -1.0f, -1.0f) * scale);
         pos.push_back(Vector3(1.0f, -1.0f, 1.0f) * scale);
         normal.push_back(Vector3(0.0f, -1.0f, 0.0f));
         normal.push_back(Vector3(0.0f, -1.0f, 0.0f));
         normal.push_back(Vector3(0.0f, -1.0f, 0.0f));
         normal.push_back(Vector3(0.0f, -1.0f, 0.0f));
+        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(0.0f, 0.0f));
         tex.push_back(Vector2(1.0f, 0.0f));
-        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(1.0f, 1.0f));
 
         pos.push_back(Vector3(-1.0f, -1.0f, -1.0f) * scale);
@@ -78,9 +78,9 @@ namespace Engine {
         normal.push_back(Vector3(0.0f, 0.0f, -1.0f));
         normal.push_back(Vector3(0.0f, 0.0f, -1.0f));
         normal.push_back(Vector3(0.0f, 0.0f, -1.0f));
+        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(0.0f, 0.0f));
         tex.push_back(Vector2(1.0f, 0.0f));
-        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(1.0f, 1.0f));
 
         pos.push_back(Vector3(1.0f, -1.0f, 1.0f) * scale);
@@ -91,9 +91,9 @@ namespace Engine {
         normal.push_back(Vector3(0.0f, 0.0f, 1.0f));
         normal.push_back(Vector3(0.0f, 0.0f, 1.0f));
         normal.push_back(Vector3(0.0f, 0.0f, 1.0f));
+        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(0.0f, 0.0f));
         tex.push_back(Vector2(1.0f, 0.0f));
-        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(1.0f, 1.0f));
 
         pos.push_back(Vector3(1.0f, -1.0f, -1.0f) * scale);
@@ -104,9 +104,9 @@ namespace Engine {
         normal.push_back(Vector3(1.0f, 0.0f, 0.0f));
         normal.push_back(Vector3(1.0f, 0.0f, 0.0f));
         normal.push_back(Vector3(1.0f, 0.0f, 0.0f));
+        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(0.0f, 0.0f));
         tex.push_back(Vector2(1.0f, 0.0f));
-        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(1.0f, 1.0f));
 
         pos.push_back(Vector3(-1.0f, -1.0f, 1.0f) * scale);
@@ -117,9 +117,9 @@ namespace Engine {
         normal.push_back(Vector3(-1.0f, 0.0f, 0.0f));
         normal.push_back(Vector3(-1.0f, 0.0f, 0.0f));
         normal.push_back(Vector3(-1.0f, 0.0f, 0.0f));
+        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(0.0f, 0.0f));
         tex.push_back(Vector2(1.0f, 0.0f));
-        tex.push_back(Vector2(0.0f, 1.0f));
         tex.push_back(Vector2(1.0f, 1.0f));
 
         for (int i = 0; i < pos.size(); i++) {

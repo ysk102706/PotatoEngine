@@ -1,3 +1,5 @@
+#include "Shader.hlsli"
+
 cbuffer meshConstantData : register(b0) 
 {
     matrix world;

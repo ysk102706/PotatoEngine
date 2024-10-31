@@ -14,13 +14,11 @@ namespace Engine {
 		virtual void Update() override;
 
 	private: 
-		ComPtr<ID3D11VertexShader> vertexShader;
-		ComPtr<ID3D11PixelShader> pixelShader;
-		ComPtr<ID3D11InputLayout> inputLayout; 
+		std::vector<std::shared_ptr<Model>> m_objectList; 
 
-		ComPtr<ID3D11RasterizerState> rasterizerState;
-
-		std::vector<std::shared_ptr<Model>> m_objectList;
+		ComPtr<ID3D11Texture2D> texture;
+		ComPtr<ID3D11ShaderResourceView> SRV; 
+		ComPtr<ID3D11SamplerState> ss;
 
 	};
 }

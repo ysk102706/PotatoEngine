@@ -2,7 +2,7 @@
 
 namespace Engine
 { 
-	namespace DefineGraphicsPSO
+	namespace PSO
 	{
 		ComPtr<ID3D11RasterizerState> solidRS;
 		ComPtr<ID3D11RasterizerState> wireRS;
@@ -12,24 +12,29 @@ namespace Engine
 
 		ComPtr<ID3D11InputLayout> basicIL;
 
+		ComPtr<ID3D11SamplerState> linearWarpSS;
+		ComPtr<ID3D11SamplerState> linearClampSS;
+		std::vector<ID3D11SamplerState*> samplerStates;
+
 		GraphicsPSO defaultSolidPSO;
 		GraphicsPSO defaultWirePSO;
 	}
 
-	void DefineGraphicsPSO::InitGraphicsPSO(ComPtr<ID3D11Device>& device) {
+	void PSO::InitGraphicsPSO(ComPtr<ID3D11Device>& device) {
 		InitShader(device);
 		InitRasterizerState(device);
+		InitSamplerState(device); 
 
 		defaultSolidPSO.vertexShader = basicVS;
 		defaultSolidPSO.pixelShader = basicPS;
 		defaultSolidPSO.inputLayout = basicIL;
-		defaultSolidPSO.rasterizerState = solidRS;
+		defaultSolidPSO.rasterizerState = solidRS; 
 
 		defaultWirePSO = defaultSolidPSO;
 		defaultWirePSO.rasterizerState = wireRS;
 	}
 
-	void DefineGraphicsPSO::InitShader(ComPtr<ID3D11Device>& device) {
+	void PSO::InitShader(ComPtr<ID3D11Device>& device) {
 		std::vector<D3D11_INPUT_ELEMENT_DESC> basicIEs{
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -40,7 +45,7 @@ namespace Engine
 		D3D11Utils::CreatePixelShader(device, L"BasicPS.hlsl", basicPS);
 	}
 
-	void DefineGraphicsPSO::InitRasterizerState(ComPtr<ID3D11Device>& device) {
+	void PSO::InitRasterizerState(ComPtr<ID3D11Device>& device) {
 		D3D11_RASTERIZER_DESC rd;
 		ZeroMemory(&rd, sizeof(rd));
 		rd.FillMode = D3D11_FILL_SOLID;
@@ -54,5 +59,28 @@ namespace Engine
 		rd.FillMode = D3D11_FILL_WIREFRAME;
 
 		device->CreateRasterizerState(&rd, wireRS.GetAddressOf());
+	}
+
+	void PSO::InitSamplerState(ComPtr<ID3D11Device>& device)
+	{
+		D3D11_SAMPLER_DESC sd;
+		ZeroMemory(&sd, sizeof(sd));
+		sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sd.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		sd.MinLOD = 0;
+		sd.MaxLOD = D3D11_FLOAT32_MAX;
+
+		device->CreateSamplerState(&sd, linearWarpSS.GetAddressOf()); 
+		samplerStates.push_back(linearWarpSS.Get());
+
+		sd.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sd.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sd.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+		device->CreateSamplerState(&sd, linearClampSS.GetAddressOf());
+		samplerStates.push_back(linearClampSS.Get());
 	}
 }

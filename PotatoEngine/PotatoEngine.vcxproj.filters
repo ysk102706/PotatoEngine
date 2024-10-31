@@ -45,6 +45,9 @@
     <ClCompile Include="DefineGraphicsPSO.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceLoader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineBase.h">
@@ -82,5 +85,11 @@
     <FxCompile Include="BasicPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ResourceLoader.h">
+      <Filter>소스 파일</Filter>
+    </None>
+    <None Include="Shader.hlsli" />
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
 #include "D3D11Utils.h"
 #include "DefaultObjectGenerator.h"
 #include "DefineGraphicsPSO.h"
+#include "ResourceLoader.h"
 
 namespace Engine {
 
@@ -18,10 +19,9 @@ namespace Engine {
 		if (!EngineBase::Initialize()) return false;
 
 		auto meshData = DefaultObjectGenerator::MakeBox(1.0f); 
-		auto Triangle = std::make_shared<Model>(m_device, m_context, std::vector<MeshData>{ meshData }); 
-		m_objectList.push_back(Triangle);
-
-		
+		meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
+		auto model = std::make_shared<Model>(m_device, m_context, std::vector<MeshData>{ meshData }); 
+		m_objectList.push_back(model); 
 
 		return true;
 	}
@@ -32,7 +32,7 @@ namespace Engine {
 		float aspect = width / height; 
 		rot += 0.02f;
 		for (auto& a : m_objectList) {
-			a->meshConstantCPU.world = (Matrix::CreateRotationY(rot) * Matrix::CreateTranslation(Vector3(0.0f, -0.3f, 1.0f))).Transpose(); 
+			a->meshConstantCPU.world = (Matrix::CreateRotationY(rot) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.5f))).Transpose(); 
 			a->meshConstantCPU.view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, -3.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
 			a->meshConstantCPU.view = a->meshConstantCPU.view.Transpose();
 			a->meshConstantCPU.proj = DirectX::XMMatrixPerspectiveFovLH(70.0f * DirectX::XM_PI / 180.0f, aspect, 0.1f, 1000.0f); 
@@ -46,12 +46,16 @@ namespace Engine {
 
 	void Engine::MainEngine::Render()
 	{
-		SetDefaultViewport();
+		SetDefaultViewport(); 
+
+		m_context->VSSetSamplers(0, PSO::samplerStates.size(), PSO::samplerStates.data());
+		m_context->PSSetSamplers(0, PSO::samplerStates.size(), PSO::samplerStates.data());
+
 		m_context->OMSetRenderTargets(1, m_backBufferRTV.GetAddressOf(), nullptr);
 		float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		m_context->ClearRenderTargetView(m_backBufferRTV.Get(), color); 
 
-		SetGraphicsPSO(DefineGraphicsPSO::defaultSolidPSO);
+		SetGraphicsPSO(PSO::defaultSolidPSO); 
 
 		for (auto& a : m_objectList) {
 			a->Render(m_context);

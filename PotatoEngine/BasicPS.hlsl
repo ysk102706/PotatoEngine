@@ -1,3 +1,7 @@
+#include "Shader.hlsli"
+
+Texture2D Tex : register(t0);
+
 struct PSInput
 {
     float4 Position : SV_POSITION;
@@ -6,5 +10,5 @@ struct PSInput
 
 float4 main(PSInput input) : SV_TARGET
 {
-    return float4(1, 1, 1, 1);
+    return Tex.Sample(linearWarpSS, input.texcoord);
 }

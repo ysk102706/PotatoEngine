@@ -9,7 +9,7 @@ namespace Engine
 {
 	using Microsoft::WRL::ComPtr;
 
-	namespace DefineGraphicsPSO
+	namespace PSO
 	{ 
 		extern ComPtr<ID3D11RasterizerState> solidRS;
 		extern ComPtr<ID3D11RasterizerState> wireRS;
@@ -19,13 +19,17 @@ namespace Engine
 
 		extern ComPtr<ID3D11InputLayout> basicIL;
 
+		extern ComPtr<ID3D11SamplerState> linearWarpSS;
+		extern ComPtr<ID3D11SamplerState> linearClampSS;
+		extern std::vector<ID3D11SamplerState*> samplerStates;
+
 		extern GraphicsPSO defaultSolidPSO;
-		extern GraphicsPSO defaultWirePSO;
+		extern GraphicsPSO defaultWirePSO; 
 		
 		void InitGraphicsPSO(ComPtr<ID3D11Device>& device);
 
 		void InitShader(ComPtr<ID3D11Device>& device);
 		void InitRasterizerState(ComPtr<ID3D11Device>& device);
-
+		void InitSamplerState(ComPtr<ID3D11Device>& device);
 	};
 }

@@ -8,7 +8,7 @@ namespace Engine {
 	{
 		ComPtr<ID3DBlob> vsBuffer;
 
-		D3DCompileFromFile(filename.c_str(), 0, 0, "main", "vs_5_0", 0, 0, vsBuffer.GetAddressOf(), 0);
+		D3DCompileFromFile(filename.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0", 0, 0, vsBuffer.GetAddressOf(), 0);
 		device->CreateVertexShader(vsBuffer->GetBufferPointer(), vsBuffer->GetBufferSize(), 0, vertexShader.GetAddressOf());
 
 		device->CreateInputLayout(inputElements.data(), inputElements.size(), 
@@ -19,7 +19,7 @@ namespace Engine {
 	{
 		ComPtr<ID3DBlob> psBuffer;
 
-		D3DCompileFromFile(filename.c_str(), 0, 0, "main", "ps_5_0", 0, 0, psBuffer.GetAddressOf(), 0);
+		D3DCompileFromFile(filename.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0", 0, 0, psBuffer.GetAddressOf(), 0);
 		device->CreatePixelShader(psBuffer->GetBufferPointer(), psBuffer->GetBufferSize(), 0, pixelShader.GetAddressOf());
 	}
 

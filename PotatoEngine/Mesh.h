@@ -12,6 +12,10 @@ namespace Engine {
 		ComPtr<ID3D11Buffer> vertexConstantBuffer;
 		ComPtr<ID3D11Buffer> pixelConstantBuffer;
 
+		ComPtr<ID3D11Texture2D> albedoTexture;
+
+		ComPtr<ID3D11ShaderResourceView> albedoSRV; 
+
 		UINT indexCount = 0;
 		UINT vertexCount = 0;
 		UINT stride = 0;

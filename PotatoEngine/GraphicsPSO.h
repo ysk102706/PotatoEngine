@@ -12,6 +12,7 @@ namespace Engine
 		ComPtr<ID3D11PixelShader> pixelShader; 
 		ComPtr<ID3D11InputLayout> inputLayout; 
 		ComPtr<ID3D11RasterizerState> rasterizerState; 
+		ComPtr<ID3D11SamplerState> samplerState;
 
 		D3D_PRIMITIVE_TOPOLOGY primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	}; 

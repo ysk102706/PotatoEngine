@@ -55,7 +55,7 @@ namespace Engine {
 
 		if (FAILED(ret)) return false; 
 		
-		DefineGraphicsPSO::InitGraphicsPSO(m_device);
+		PSO::InitGraphicsPSO(m_device);
 
 		CreateBuffer();
 
