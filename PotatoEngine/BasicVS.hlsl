@@ -3,30 +3,24 @@
 cbuffer meshConstantData : register(b0) 
 {
     matrix world;
-    matrix view; 
-    matrix proj; 
-};
-
-struct VSInput 
-{
-    float3 position : POSITION;
-    float3 normal : NORMAL;
-    float2 texcoord : TEXCOORD;
-};
-
-struct PSInput
-{ 
-    float4 position : SV_POSITION;
-    float2 texcoord : TEXCOORD;
-};
+    matrix invTranspose;
+}; 
 
 PSInput main(VSInput input)
 {
     PSInput output;
-    output.position = float4(input.position, 1.0); 
-    output.position = mul(output.position, world);
-    output.position = mul(output.position, view);
-    output.position = mul(output.position, proj);
+    output.pos = float4(input.pos, 1.0); 
+    
+    output.pos = mul(output.pos, world);
+    output.posWorld = output.pos;
+    
+    output.pos = mul(output.pos, view);
+    output.pos = mul(output.pos, proj);
+    
+    output.normalWorld = mul(float4(input.normal, 0.0), invTranspose).xyz; 
+    normalize(output.normalWorld);
+    
     output.texcoord = input.texcoord;
+    
     return output;
 }

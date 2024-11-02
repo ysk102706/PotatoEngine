@@ -27,7 +27,7 @@ namespace Engine {
 
 
 
-	void D3D11Utils::CreateIndexBuffer(ComPtr<ID3D11Device>& device, const std::vector<uint16_t> indices, ComPtr<ID3D11Buffer>& indexBuffer)
+	void D3D11Utils::CreateIndexBuffer(ComPtr<ID3D11Device>& device, const std::vector<uint16_t>& indices, ComPtr<ID3D11Buffer>& indexBuffer)
 	{
 		D3D11_BUFFER_DESC id;
 		ZeroMemory(&id, sizeof(id));

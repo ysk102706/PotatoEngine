@@ -131,7 +131,6 @@
     <ClCompile Include="D3D11Utils.cpp" />
     <ClCompile Include="DefaultObjectGenerator.cpp" />
     <ClCompile Include="DefineGraphicsPSO.cpp" />
-    <ClCompile Include="DefineGraphicsPSO.h" />
     <ClCompile Include="EngineBase.cpp" />
     <ClCompile Include="GraphicsPSO.cpp" />
     <ClCompile Include="main.cpp" />
@@ -142,12 +141,14 @@
   <ItemGroup>
     <ClInclude Include="D3D11Utils.h" />
     <ClInclude Include="DefaultObjectGenerator.h" />
+    <ClInclude Include="DefineGraphicsPSO.h" />
     <ClInclude Include="EngineBase.h" />
     <ClInclude Include="GraphicsPSO.h" />
     <ClInclude Include="MainEngine.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ResourceLoader.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
@@ -161,7 +162,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ResourceLoader.h" />
     <None Include="Shader.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

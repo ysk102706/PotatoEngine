@@ -12,13 +12,10 @@ namespace Engine {
 		virtual bool Initialize() override;
 		virtual void Render() override;
 		virtual void Update() override;
+		virtual void UpdateGUI() override;
 
 	private: 
 		std::vector<std::shared_ptr<Model>> m_objectList; 
-
-		ComPtr<ID3D11Texture2D> texture;
-		ComPtr<ID3D11ShaderResourceView> SRV; 
-		ComPtr<ID3D11SamplerState> ss;
 
 	};
 }

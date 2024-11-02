@@ -19,18 +19,18 @@ Engine::Model::Model(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& 
 
 void Engine::Model::Initialize(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context, const std::vector<MeshData>& meshData)
 { 
-	meshConstantCPU.world = meshConstantCPU.view = meshConstantCPU.proj = Matrix();
+	meshConstantCPU.world = Matrix();
 
 	D3D11Utils::CreateConstantBuffer(device, meshConstantCPU, meshConstantGPU); 
 
 	for (const auto& a : meshData) {
 		auto newMesh = std::make_shared<Mesh>(); 
 		newMesh->stride = sizeof(Vertex);
-		newMesh->indexCount = a.indices.size();
 		newMesh->vertexCount = a.vertices.size(); 
+		newMesh->indexCount = a.indices.size();
 
 		D3D11Utils::CreateVertexBuffer(device, a.vertices, newMesh->vertexBuffer); 
-		D3D11Utils::CreateVertexBuffer(device, a.indices, newMesh->indexBuffer); 
+		D3D11Utils::CreateIndexBuffer(device, a.indices, newMesh->indexBuffer); 
 
 		if (!a.albedoTextureFile.empty()) {
 			ResourceLoader::CreateTexture(device, context, a.albedoTextureFile, newMesh->albedoTexture, newMesh->albedoSRV);

@@ -90,6 +90,8 @@
     <None Include="ResourceLoader.h">
       <Filter>소스 파일</Filter>
     </None>
-    <None Include="Shader.hlsli" />
+    <None Include="Shader.hlsli">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

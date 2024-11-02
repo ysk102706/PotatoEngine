@@ -14,8 +14,7 @@ namespace Engine
 
 	struct ModelConstantData {
 		Matrix world; 
-		Matrix view;
-		Matrix proj; 
+		Matrix invTranspose; 
 	}; 
 
 	class Model {

@@ -2,8 +2,16 @@
 #include <iostream>
 #include "DefineGraphicsPSO.h"
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd,
+	UINT msg,
+	WPARAM wParam,
+	LPARAM lParam);
+
 namespace Engine { 
 	LRESULT WINAPI WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
+			return true;
+
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 
@@ -19,6 +27,7 @@ namespace Engine {
 	{
 		if (!InitWindow()) return false;
 		if (!InitD3D()) return false;
+		if (!InitImGui()) return false;
 
 		return true;
 	}
@@ -61,6 +70,8 @@ namespace Engine {
 
 		SetDefaultViewport(); 
 
+		D3D11Utils::CreateConstantBuffer(m_device, globalConstantCPU, globalConstantGPU); 
+
 		return true;
 	}
 
@@ -87,6 +98,26 @@ namespace Engine {
 		return true;
 	}
 
+	bool EngineBase::InitImGui()
+	{
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+		(void)io;
+		io.DisplaySize = ImVec2(width, height);
+		ImGui::StyleColorsLight();
+
+		if (!ImGui_ImplDX11_Init(m_device.Get(), m_context.Get())) {
+			return false;
+		}
+
+		if (!ImGui_ImplWin32_Init(m_window)) {
+			return false;
+		}
+
+		return true;
+	}
+
 	void EngineBase::CreateBuffer()
 	{
 		ComPtr<ID3D11Texture2D> backBuffer;
@@ -98,7 +129,6 @@ namespace Engine {
 		else {
 			std::cout << "Create RTV failed\n";
 		}
-
 	}
 
 	void EngineBase::SetDefaultViewport()
@@ -123,14 +153,32 @@ namespace Engine {
 				DispatchMessage(&msg);
 			}
 			else {
+				ImGui_ImplDX11_NewFrame(); 
+				ImGui_ImplWin32_NewFrame();
+
+				ImGui::NewFrame(); 
+				ImGui::Begin("Scene Control");
+
+				ImGui::Text("Average %.3f ms/frame (%.1f FPS)",
+					1000.0f / ImGui::GetIO().Framerate,
+					ImGui::GetIO().Framerate);
+
+				UpdateGUI(); 
+
+				ImGui::End();
+				ImGui::Render();
+
 				Update();
-				Render(); 
+				Render();
+
+				ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
 				m_swapChain->Present(1, 0); 
 			}
 		}
 	}
 
-	void EngineBase::SetGraphicsPSO(const GraphicsPSO &pso)
+	void EngineBase::SetGraphicsPSO(const GraphicsPSO& pso)
 	{
 		m_context->VSSetShader(pso.vertexShader.Get(), 0, 0);
 		m_context->PSSetShader(pso.pixelShader.Get(), 0, 0);
@@ -139,4 +187,21 @@ namespace Engine {
 		m_context->IASetPrimitiveTopology(pso.primitiveTopology);
 	}
 
+	void EngineBase::SetGlobalConstant()
+	{
+		m_context->VSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf());
+		m_context->PSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf());
+	}
+
+	void EngineBase::UpdateGlobalConstant()
+	{
+		globalConstantCPU.view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, -3.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
+		globalConstantCPU.view = globalConstantCPU.view.Transpose();
+		globalConstantCPU.proj = DirectX::XMMatrixPerspectiveFovLH(70.0f * DirectX::XM_PI / 180.0f, width / height, 0.1f, 1000.0f); 
+		globalConstantCPU.proj = globalConstantCPU.proj.Transpose(); 
+		globalConstantCPU.eyePos = Vector3(0.0f, 0.0f, -3.0f); 
+		globalConstantCPU.lightPos = Vector3(0.0f, 0.0f, -3.0f); 
+
+		D3D11Utils::UpdateConstantBuffer(m_context, globalConstantCPU, globalConstantGPU);
+	}
 }

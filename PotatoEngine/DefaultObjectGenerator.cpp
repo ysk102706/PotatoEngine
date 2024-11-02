@@ -142,6 +142,5 @@ namespace Engine {
         };
 
         return meshData;
-    }
-
+    } 
 }
