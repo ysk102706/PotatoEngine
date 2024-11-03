@@ -200,7 +200,11 @@ namespace Engine {
 		globalConstantCPU.proj = DirectX::XMMatrixPerspectiveFovLH(70.0f * DirectX::XM_PI / 180.0f, width / height, 0.1f, 1000.0f); 
 		globalConstantCPU.proj = globalConstantCPU.proj.Transpose(); 
 		globalConstantCPU.eyePos = Vector3(0.0f, 0.0f, -3.0f); 
-		globalConstantCPU.lightPos = Vector3(0.0f, 0.0f, -3.0f); 
+
+		globalConstantCPU.light[0].pos = Vector3(0.0f, 0.0f, -2.0f); 
+		globalConstantCPU.light[0].dir = Vector3(0.0f, 0.0f, 1.0f); 
+		globalConstantCPU.light[0].fallStart = 0.1f;
+		globalConstantCPU.light[0].strength = Vector3(1.0f); 
 
 		D3D11Utils::UpdateConstantBuffer(m_context, globalConstantCPU, globalConstantGPU);
 	}

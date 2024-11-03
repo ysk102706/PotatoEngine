@@ -14,15 +14,33 @@ namespace Engine {
 	using DirectX::SimpleMath::Vector3; 
 	using DirectX::SimpleMath::Matrix; 
 
+	struct Material {
+		Vector3 ambient;
+		float shininess;
+		Vector3 diffuse; 
+		float dummy1;
+		Vector3 specular; 
+		float dummy2; 
+	}; 
+
+	struct Light { 
+		Vector3 pos; 
+		float fallStart; 
+		Vector3 dir; 
+		float fallEnd; 
+		Vector3 strength; 
+		float spotFactor; 
+		float lightType;
+		Vector3 dummy;
+	};
+
 	struct GlobalConstantData {
 		Matrix view;
 		Matrix proj; 
 		Vector3 eyePos;
-		float dummy;
-		Vector3 lightPos; 
-		float diffuse;
-		float specular;
-		Vector3 dummy1;
+		float dummy; 
+		Material mat; 
+		Light light[1]; 
 	};
 
 	class EngineBase {

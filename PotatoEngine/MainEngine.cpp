@@ -31,7 +31,7 @@ namespace Engine {
 		UpdateGlobalConstant();
 
 		static float rot = 0;
-		//rot += 0.02f;
+		rot += 0.002f;
 		for (auto& a : m_objectList) { 
 			Matrix sr = Matrix::CreateScale(Vector3(1.0f, 1.0f, 1.0f)) * Matrix::CreateRotationY(rot);
 			a->meshConstantCPU.world = (sr * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.5f))).Transpose();
@@ -65,8 +65,27 @@ namespace Engine {
 	}
 
 	void MainEngine::UpdateGUI() {
-		ImGui::SliderFloat("diffuse", &globalConstantCPU.diffuse, 0.0f, 1.0f);
-		ImGui::SliderFloat("specular", &globalConstantCPU.specular, 0.0f, 1.0f);
+		ImGui::SliderFloat3("ambient", &globalConstantCPU.mat.ambient.x, 0.0f, 0.1f);
+		ImGui::SliderFloat("diffuse", &diff, 0.0f, 1.0f); 
+		ImGui::SliderFloat("specular", &spec, 0.0f, 1.0f); 
+		globalConstantCPU.mat.diffuse = Vector3(diff);
+		globalConstantCPU.mat.specular = Vector3(spec); 
+
+		ImGui::SliderFloat("shininess", &globalConstantCPU.mat.shininess, 1.0f, 256.0f);
+		ImGui::SliderFloat("spotFactor", &globalConstantCPU.light[0].spotFactor, 0.0f, 256.0f); 
+		ImGui::SliderFloat("fallEnd", &globalConstantCPU.light[0].fallEnd, 1.0f, 10.0f);
+
+		if (ImGui::RadioButton("Directional Light", globalConstantCPU.light[0].lightType == 0)) {
+			globalConstantCPU.light[0].lightType = 0;
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Point Light", globalConstantCPU.light[0].lightType == 1)) {
+			globalConstantCPU.light[0].lightType = 1;
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Spot Light", globalConstantCPU.light[0].lightType == 2)) {
+			globalConstantCPU.light[0].lightType = 2;
+		}
 	}
 
 }
