@@ -58,6 +58,16 @@ void Model::Render(ComPtr<ID3D11DeviceContext>& context)
 	}
 }
 
+void Model::NormalRender(ComPtr<ID3D11DeviceContext>& context)
+{
+	for (const auto& a : meshes) { 
+		context->GSSetConstantBuffers(0, 1, a->vertexConstantBuffer.GetAddressOf());
+
+		context->IASetVertexBuffers(0, 1, a->vertexBuffer.GetAddressOf(), &a->stride, &a->offset);
+		context->Draw(a->vertexCount, 0);
+	}
+}
+
 void Model::UpdateConstantBuffer(ComPtr<ID3D11DeviceContext>& context)
 {
 	D3D11Utils::UpdateConstantBuffer(context, meshConstantCPU, meshConstantGPU);

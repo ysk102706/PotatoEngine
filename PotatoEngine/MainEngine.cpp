@@ -18,7 +18,9 @@ namespace Engine {
 	{
 		if (!EngineBase::Initialize()) return false;
 
-		auto meshData = DefaultObjectGenerator::MakeBox(1.0f); 
+		//auto meshData = DefaultObjectGenerator::MakeSquareGrid(1.0f, 3, 2); 
+		//auto meshData = DefaultObjectGenerator::MakeCylinder(1.0f, 1.5f, 2.0f, 20, 5); 
+		auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 3, 2); 
 		meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
 		auto model = std::make_shared<Model>(m_device, m_context, std::vector<MeshData>{ meshData }); 
 		m_objectList.push_back(model); 
@@ -34,7 +36,7 @@ namespace Engine {
 		rot += 0.002f;
 		for (auto& a : m_objectList) { 
 			Matrix sr = Matrix::CreateScale(Vector3(1.0f, 1.0f, 1.0f)) * Matrix::CreateRotationY(rot);
-			a->meshConstantCPU.world = (sr * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.5f))).Transpose();
+			a->meshConstantCPU.world = (sr * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 3.0f))).Transpose();
 			a->meshConstantCPU.invTranspose = sr.Invert();
 		} 
 
@@ -53,39 +55,31 @@ namespace Engine {
 		
 		SetGlobalConstant();
 
-		m_context->OMSetRenderTargets(1, m_backBufferRTV.GetAddressOf(), nullptr);
+		m_context->OMSetRenderTargets(1, m_backBufferRTV.GetAddressOf(), m_DSV.Get());
 		float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		m_context->ClearRenderTargetView(m_backBufferRTV.Get(), color); 
+		m_context->ClearRenderTargetView(m_backBufferRTV.Get(), color);  
+		m_context->ClearDepthStencilView(m_DSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0.0f);
 
-		SetGraphicsPSO(PSO::defaultSolidPSO); 
+		if (useBackFaceCull) SetGraphicsPSO(useWire ? PSO::defaultWirePSO : PSO::defaultSolidPSO); 
+		else SetGraphicsPSO(useWire ? PSO::wireNoneCullPSO : PSO::solidNoneCullPSO); 
 
 		for (auto& a : m_objectList) {
 			a->Render(m_context);
 		}
+
+		SetGraphicsPSO(PSO::normalPSO);
+
+		if (useNormal) {
+			for (auto& a : m_objectList) {
+				a->NormalRender(m_context);
+			}
+		}
 	}
 
 	void MainEngine::UpdateGUI() {
-		ImGui::SliderFloat3("ambient", &globalConstantCPU.mat.ambient.x, 0.0f, 0.1f);
-		ImGui::SliderFloat("diffuse", &diff, 0.0f, 1.0f); 
-		ImGui::SliderFloat("specular", &spec, 0.0f, 1.0f); 
-		globalConstantCPU.mat.diffuse = Vector3(diff);
-		globalConstantCPU.mat.specular = Vector3(spec); 
-
-		ImGui::SliderFloat("shininess", &globalConstantCPU.mat.shininess, 1.0f, 256.0f);
-		ImGui::SliderFloat("spotFactor", &globalConstantCPU.light[0].spotFactor, 0.0f, 256.0f); 
-		ImGui::SliderFloat("fallEnd", &globalConstantCPU.light[0].fallEnd, 1.0f, 10.0f);
-
-		if (ImGui::RadioButton("Directional Light", globalConstantCPU.light[0].lightType == 0)) {
-			globalConstantCPU.light[0].lightType = 0;
-		}
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Point Light", globalConstantCPU.light[0].lightType == 1)) {
-			globalConstantCPU.light[0].lightType = 1;
-		}
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Spot Light", globalConstantCPU.light[0].lightType == 2)) {
-			globalConstantCPU.light[0].lightType = 2;
-		}
+		ImGui::Checkbox("useWire", &useWire);
+		ImGui::Checkbox("useNormal", &useNormal);
+		ImGui::Checkbox("useBackFaceCull", &useBackFaceCull);
 	}
 
 }

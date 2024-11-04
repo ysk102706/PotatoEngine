@@ -128,7 +128,30 @@ namespace Engine {
 		} 
 		else {
 			std::cout << "Create RTV failed\n";
-		}
+		} 
+
+		CreateDepthBuffer();
+	}
+
+	void EngineBase::CreateDepthBuffer()
+	{
+		D3D11_TEXTURE2D_DESC td; 
+		ZeroMemory(&td, sizeof(td));
+		td.Width = width;
+		td.Height = height;
+		td.MipLevels = 1;
+		td.ArraySize = 1;
+		td.Usage = D3D11_USAGE_DEFAULT;
+		td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		td.CPUAccessFlags = 0;
+		td.MiscFlags = 0;
+		td.SampleDesc.Count = 1;
+		td.SampleDesc.Quality = 0;
+		td.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+		ComPtr<ID3D11Texture2D> depthStencilBuffer; 
+		m_device->CreateTexture2D(&td, 0, depthStencilBuffer.GetAddressOf());
+		m_device->CreateDepthStencilView(depthStencilBuffer.Get(), 0, m_DSV.GetAddressOf());
 	}
 
 	void EngineBase::SetDefaultViewport()
@@ -180,7 +203,8 @@ namespace Engine {
 
 	void EngineBase::SetGraphicsPSO(const GraphicsPSO& pso)
 	{
-		m_context->VSSetShader(pso.vertexShader.Get(), 0, 0);
+		m_context->VSSetShader(pso.vertexShader.Get(), 0, 0); 
+		m_context->GSSetShader(pso.geometryShader.Get(), 0, 0);
 		m_context->PSSetShader(pso.pixelShader.Get(), 0, 0);
 		m_context->RSSetState(pso.rasterizerState.Get()); 
 		m_context->IASetInputLayout(pso.inputLayout.Get());
@@ -190,21 +214,17 @@ namespace Engine {
 	void EngineBase::SetGlobalConstant()
 	{
 		m_context->VSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf());
+		m_context->GSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf());
 		m_context->PSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf());
 	}
 
 	void EngineBase::UpdateGlobalConstant()
 	{
-		globalConstantCPU.view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, -3.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
+		globalConstantCPU.view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, -2.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
 		globalConstantCPU.view = globalConstantCPU.view.Transpose();
 		globalConstantCPU.proj = DirectX::XMMatrixPerspectiveFovLH(70.0f * DirectX::XM_PI / 180.0f, width / height, 0.1f, 1000.0f); 
 		globalConstantCPU.proj = globalConstantCPU.proj.Transpose(); 
-		globalConstantCPU.eyePos = Vector3(0.0f, 0.0f, -3.0f); 
-
-		globalConstantCPU.light[0].pos = Vector3(0.0f, 0.0f, -2.0f); 
-		globalConstantCPU.light[0].dir = Vector3(0.0f, 0.0f, 1.0f); 
-		globalConstantCPU.light[0].fallStart = 0.1f;
-		globalConstantCPU.light[0].strength = Vector3(1.0f); 
+		globalConstantCPU.eyePos = Vector3(0.0f, 0.0f, -2.0f); 
 
 		D3D11Utils::UpdateConstantBuffer(m_context, globalConstantCPU, globalConstantGPU);
 	}

@@ -13,9 +13,14 @@ namespace Engine
 	{ 
 		extern ComPtr<ID3D11RasterizerState> solidRS;
 		extern ComPtr<ID3D11RasterizerState> wireRS;
+		extern ComPtr<ID3D11RasterizerState> solidNoneCullRS;
+		extern ComPtr<ID3D11RasterizerState> wireNoneCullRS;
 
 		extern ComPtr<ID3D11VertexShader> basicVS;
 		extern ComPtr<ID3D11PixelShader>  basicPS;
+		extern ComPtr<ID3D11VertexShader> normalVS;
+		extern ComPtr<ID3D11GeometryShader> normalGS;
+		extern ComPtr<ID3D11PixelShader> normalPS;
 
 		extern ComPtr<ID3D11InputLayout> basicIL;
 
@@ -25,6 +30,9 @@ namespace Engine
 
 		extern GraphicsPSO defaultSolidPSO;
 		extern GraphicsPSO defaultWirePSO; 
+		extern GraphicsPSO normalPSO;
+		extern GraphicsPSO solidNoneCullPSO;
+		extern GraphicsPSO wireNoneCullPSO;
 		
 		void InitGraphicsPSO(ComPtr<ID3D11Device>& device);
 

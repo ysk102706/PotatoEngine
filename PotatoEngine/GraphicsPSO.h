@@ -9,6 +9,7 @@ namespace Engine
 	class GraphicsPSO {
 	public:
 		ComPtr<ID3D11VertexShader> vertexShader; 
+		ComPtr<ID3D11GeometryShader> geometryShader; 
 		ComPtr<ID3D11PixelShader> pixelShader; 
 		ComPtr<ID3D11InputLayout> inputLayout; 
 		ComPtr<ID3D11RasterizerState> rasterizerState; 

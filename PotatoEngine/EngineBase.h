@@ -14,15 +14,6 @@ namespace Engine {
 	using DirectX::SimpleMath::Vector3; 
 	using DirectX::SimpleMath::Matrix; 
 
-	struct Material {
-		Vector3 ambient;
-		float shininess;
-		Vector3 diffuse; 
-		float dummy1;
-		Vector3 specular; 
-		float dummy2; 
-	}; 
-
 	struct Light { 
 		Vector3 pos; 
 		float fallStart; 
@@ -39,8 +30,6 @@ namespace Engine {
 		Matrix proj; 
 		Vector3 eyePos;
 		float dummy; 
-		Material mat; 
-		Light light[1]; 
 	};
 
 	class EngineBase {
@@ -54,6 +43,7 @@ namespace Engine {
 		bool InitImGui();
 
 		void CreateBuffer(); 
+		void CreateDepthBuffer();
 		void SetDefaultViewport(); 
 
 		void Run();
@@ -76,6 +66,8 @@ namespace Engine {
 		ComPtr<ID3D11DeviceContext> m_context; 
 		ComPtr<IDXGISwapChain> m_swapChain;
 		ComPtr<ID3D11RenderTargetView> m_backBufferRTV;
+
+		ComPtr<ID3D11DepthStencilView> m_DSV;
 
 		D3D11_VIEWPORT m_viewport; 
 

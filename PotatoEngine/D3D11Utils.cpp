@@ -15,6 +15,14 @@ namespace Engine {
 								  vsBuffer->GetBufferPointer(), vsBuffer->GetBufferSize(), inputLayout.GetAddressOf());
 	}
 
+	void D3D11Utils::CreateGeometryShader(ComPtr<ID3D11Device>& device, const std::wstring& filename, ComPtr<ID3D11GeometryShader>& geometryShader)
+	{
+		ComPtr<ID3DBlob> gsBuffer;
+
+		D3DCompileFromFile(filename.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "gs_5_0", 0, 0, gsBuffer.GetAddressOf(), 0);
+		device->CreateGeometryShader(gsBuffer->GetBufferPointer(), gsBuffer->GetBufferSize(), 0, geometryShader.GetAddressOf()); 
+	}
+
 	void D3D11Utils::CreatePixelShader(ComPtr<ID3D11Device>& device, const std::wstring& filename, ComPtr<ID3D11PixelShader>& pixelShader)
 	{
 		ComPtr<ID3DBlob> psBuffer;

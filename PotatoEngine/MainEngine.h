@@ -17,7 +17,8 @@ namespace Engine {
 	private: 
 		std::vector<std::shared_ptr<Model>> m_objectList; 
 
-		float diff = 0, spec = 0;
-
+		bool useWire;
+		bool useNormal;
+		bool useBackFaceCull;
 	};
 }

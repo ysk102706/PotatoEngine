@@ -39,9 +39,6 @@
     <ClCompile Include="GraphicsPSO.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="DefineGraphicsPSO.h">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="DefineGraphicsPSO.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -77,6 +74,12 @@
     <ClInclude Include="GraphicsPSO.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
+    <ClInclude Include="DefineGraphicsPSO.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceLoader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BasicVS.hlsl">
@@ -85,11 +88,17 @@
     <FxCompile Include="BasicPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="NormalGS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="NormalPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="NormalVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ResourceLoader.h">
-      <Filter>소스 파일</Filter>
-    </None>
     <None Include="Shader.hlsli">
       <Filter>Shader</Filter>
     </None>

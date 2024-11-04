@@ -31,8 +31,6 @@ cbuffer globalConstantData : register(b1)
     matrix proj;
     float3 eyePos;
     float dummy; 
-    Material mat;
-    Light light[MAXLIGHT];
 }; 
 
 float CalcFallOff(Light light, float d)
@@ -43,8 +41,7 @@ float CalcFallOff(Light light, float d)
 float3 Phong(Light light, float3 toEye, float3 normal, Material mat)
 {
     float diff = max(dot(-light.dir, normal), 0.0);
-    float spec = max(dot(toEye, reflect(light.dir, normal)), 0.0);
-    spec = pow(spec, mat.shininess);
+    float spec = pow(max(dot(toEye, reflect(light.dir, normal)), 0.0), mat.shininess);
     
     return mat.ambient + mat.diffuse * diff + mat.specular * spec;
 }
