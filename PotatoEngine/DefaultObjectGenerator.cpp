@@ -261,4 +261,67 @@ namespace Engine {
         return meshData;
     }
 
+    MeshData DefaultObjectGenerator::SubdivideToSphere(float radius, MeshData meshData)
+    {
+        for (auto& a : meshData.vertices) {
+            a.position = a.normal * radius;
+        }
+
+        auto MoveVertex = [&](Vertex& v) {
+            v.normal = v.position;
+            v.normal.Normalize(); 
+            v.position = v.normal * radius; 
+        }; 
+
+        MeshData newMeshData;
+        int idx = 0;
+        for (int i = 0; i < meshData.indices.size(); i += 3) {
+            int i0 = meshData.indices[i];
+            int i1 = meshData.indices[i + 1];
+            int i2 = meshData.indices[i + 2];
+
+            Vertex v0 = meshData.vertices[i0];
+            Vertex v1 = meshData.vertices[i1];
+            Vertex v2 = meshData.vertices[i2]; 
+
+            Vertex v3;
+            v3.position = (v0.position + v1.position) * 0.5f;
+            v3.texcoord = (v0.texcoord + v1.texcoord) * 0.5f; 
+            MoveVertex(v3);
+
+            Vertex v4;
+            v4.position = (v1.position + v2.position) * 0.5f;
+            v4.texcoord = (v1.texcoord + v2.texcoord) * 0.5f;
+            MoveVertex(v4);
+
+            Vertex v5;
+            v5.position = (v2.position + v0.position) * 0.5f;
+            v5.texcoord = (v2.texcoord + v0.texcoord) * 0.5f;
+            MoveVertex(v5); 
+
+            newMeshData.vertices.push_back(v0);
+            newMeshData.vertices.push_back(v3);
+            newMeshData.vertices.push_back(v5);
+            
+            newMeshData.vertices.push_back(v3);
+            newMeshData.vertices.push_back(v1);
+            newMeshData.vertices.push_back(v4);
+            
+            newMeshData.vertices.push_back(v4);
+            newMeshData.vertices.push_back(v2);
+            newMeshData.vertices.push_back(v5);
+
+            newMeshData.vertices.push_back(v3);
+            newMeshData.vertices.push_back(v4);
+            newMeshData.vertices.push_back(v5);
+
+            for (int j = 0; j < 12; j++) {
+                newMeshData.indices.push_back(j + idx);
+            } 
+            idx += 12;
+        } 
+
+        return newMeshData;
+    }
+
 }

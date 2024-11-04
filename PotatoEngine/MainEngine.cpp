@@ -20,7 +20,9 @@ namespace Engine {
 
 		//auto meshData = DefaultObjectGenerator::MakeSquareGrid(1.0f, 3, 2); 
 		//auto meshData = DefaultObjectGenerator::MakeCylinder(1.0f, 1.5f, 2.0f, 20, 5); 
-		auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 3, 2); 
+		auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 4, 4); 
+		meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
+		meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
 		meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
 		auto model = std::make_shared<Model>(m_device, m_context, std::vector<MeshData>{ meshData }); 
 		m_objectList.push_back(model); 
@@ -67,9 +69,9 @@ namespace Engine {
 			a->Render(m_context);
 		}
 
-		SetGraphicsPSO(PSO::normalPSO);
-
 		if (useNormal) {
+			SetGraphicsPSO(PSO::normalPSO);
+
 			for (auto& a : m_objectList) {
 				a->NormalRender(m_context);
 			}
