@@ -1,6 +1,7 @@
 #include "DefaultObjectGenerator.h"
 #include <vector>
 #include <DirectXMath.h> 
+#include "ResourceLoader.h"
 
 namespace Engine {
     using namespace DirectX;
@@ -322,6 +323,38 @@ namespace Engine {
         } 
 
         return newMeshData;
+    }
+
+    std::vector<MeshData> DefaultObjectGenerator::ReadFromFile(std::string path, std::string filename, bool revertNormal)
+    {
+        std::vector<MeshData> meshes = ResourceLoader::LoadModel(path, filename, revertNormal); 
+        
+        Vector3 vmin(1000, 1000, 1000);
+        Vector3 vmax(-1000, -1000, -1000);
+        for (auto& a : meshes) {
+            for (auto& b : a.vertices) {
+                vmin.x = XMMin(vmin.x, b.position.x);
+                vmin.y = XMMin(vmin.y, b.position.y);
+                vmin.z = XMMin(vmin.z, b.position.z);
+                vmax.x = XMMax(vmax.x, b.position.x);
+                vmax.y = XMMax(vmax.y, b.position.y);
+                vmax.z = XMMax(vmax.z, b.position.z);
+            }
+        }
+
+        float dx = vmax.x - vmin.x, dy = vmax.y - vmin.y, dz = vmax.z - vmin.z;
+        float dl = XMMax(XMMax(dx, dy), dz); 
+        float cx = (vmax.x + vmin.x) * 0.5f, cy = (vmax.y + vmin.y) * 0.5f, cz = (vmax.z + vmin.z) * 0.5f; 
+
+        for (auto& a : meshes) {
+            for (auto& b : a.vertices) {
+                b.position.x = (b.position.x - cx) / dl;
+                b.position.y = (b.position.y - cy) / dl;
+                b.position.z = (b.position.z - cz) / dl;
+            }
+        }
+
+        return meshes;
     }
 
 }

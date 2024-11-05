@@ -35,15 +35,15 @@ namespace Engine {
 
 
 
-	void D3D11Utils::CreateIndexBuffer(ComPtr<ID3D11Device>& device, const std::vector<uint16_t>& indices, ComPtr<ID3D11Buffer>& indexBuffer)
+	void D3D11Utils::CreateIndexBuffer(ComPtr<ID3D11Device>& device, const std::vector<uint32_t>& indices, ComPtr<ID3D11Buffer>& indexBuffer)
 	{
 		D3D11_BUFFER_DESC id;
 		ZeroMemory(&id, sizeof(id));
-		id.ByteWidth = sizeof(uint16_t) * indices.size();
+		id.ByteWidth = sizeof(uint32_t) * indices.size();
 		id.Usage = D3D11_USAGE_IMMUTABLE;
 		id.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		id.CPUAccessFlags = 0;
-		id.StructureByteStride = sizeof(uint16_t);
+		id.StructureByteStride = sizeof(uint32_t);
 
 		D3D11_SUBRESOURCE_DATA isd = { 0 };
 		isd.pSysMem = indices.data();

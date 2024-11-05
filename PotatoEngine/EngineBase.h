@@ -30,6 +30,7 @@ namespace Engine {
 		Matrix proj; 
 		Vector3 eyePos;
 		float dummy; 
+		Light light;
 	};
 
 	class EngineBase {

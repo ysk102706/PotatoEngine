@@ -32,7 +32,7 @@ namespace Engine
 
 			device->CreateBuffer(&vd, &vsd, vertexBuffer.GetAddressOf());
 		}
-		static void CreateIndexBuffer(ComPtr<ID3D11Device>& device, const std::vector<uint16_t>& indices, ComPtr<ID3D11Buffer>& pixelBuffer); 
+		static void CreateIndexBuffer(ComPtr<ID3D11Device>& device, const std::vector<uint32_t>& indices, ComPtr<ID3D11Buffer>& pixelBuffer); 
 		
 		template<typename T_Data>
 		static void CreateConstantBuffer(ComPtr<ID3D11Device>& device, const T_Data& ConstantData, ComPtr<ID3D11Buffer>& constantBuffer) {

@@ -220,7 +220,7 @@ namespace Engine {
 
 	void EngineBase::UpdateGlobalConstant()
 	{
-		globalConstantCPU.view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, -2.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
+		globalConstantCPU.view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
 		globalConstantCPU.view = globalConstantCPU.view.Transpose();
 		globalConstantCPU.proj = DirectX::XMMatrixPerspectiveFovLH(70.0f * DirectX::XM_PI / 180.0f, width / height, 0.1f, 1000.0f); 
 		globalConstantCPU.proj = globalConstantCPU.proj.Transpose(); 

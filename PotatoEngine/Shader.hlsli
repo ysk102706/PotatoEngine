@@ -31,6 +31,7 @@ cbuffer globalConstantData : register(b1)
     matrix proj;
     float3 eyePos;
     float dummy; 
+    Light light;
 }; 
 
 float CalcFallOff(Light light, float d)

@@ -10,12 +10,26 @@
 namespace Engine
 {
 	using Microsoft::WRL::ComPtr;
-	using DirectX::SimpleMath::Matrix;
+	using DirectX::SimpleMath::Vector3; 
+	using DirectX::SimpleMath::Matrix; 
+
+	struct Material {
+		Vector3 ambient; 
+		float shininess;
+		Vector3 diffuse;
+		float dummy1;
+		Vector3 specular;
+		float dummy2;
+	};
 
 	struct ModelConstantData {
 		Matrix world; 
 		Matrix invTranspose; 
 	}; 
+
+	struct MaterialConstantData {
+		Material mat; 
+	};
 
 	class Model {
 	public: 
@@ -29,12 +43,14 @@ namespace Engine
 
 		void UpdateConstantBuffer(ComPtr<ID3D11DeviceContext>& context);
 
-		ModelConstantData meshConstantCPU;
+		ModelConstantData modelConstantCPU;
+		MaterialConstantData materialConstantCPU;
 
 	private:
 		std::vector<std::shared_ptr<Mesh>> meshes; 
 
-		ComPtr<ID3D11Buffer> meshConstantGPU;
+		ComPtr<ID3D11Buffer> modelConstantGPU;
+		ComPtr<ID3D11Buffer> materialConstantGPU;
 
 	};
 }
