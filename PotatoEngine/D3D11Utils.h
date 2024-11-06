@@ -16,7 +16,6 @@ namespace Engine
 		static void CreateGeometryShader(ComPtr<ID3D11Device>& device, const std::wstring& filename, ComPtr<ID3D11GeometryShader>& geometryShader); 
 		static void CreatePixelShader(ComPtr<ID3D11Device>& device, const std::wstring& filename, ComPtr<ID3D11PixelShader>& pixelShader); 
 
-
 		template<typename T_Vertex>
 		static void CreateVertexBuffer(ComPtr<ID3D11Device>& device, const std::vector<T_Vertex>& vertices, ComPtr<ID3D11Buffer>& vertexBuffer) {
 			D3D11_BUFFER_DESC vd;

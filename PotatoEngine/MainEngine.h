@@ -16,9 +16,10 @@ namespace Engine {
 
 	private: 
 		std::vector<std::shared_ptr<Model>> m_objectList; 
+		std::shared_ptr<Model> m_envMap;
 
 		bool useWire;
 		bool useNormal;
-		bool useBackFaceCull;
+		bool useBackFaceCull; 
 	};
 }

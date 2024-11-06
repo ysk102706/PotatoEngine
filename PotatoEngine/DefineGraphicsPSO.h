@@ -21,6 +21,8 @@ namespace Engine
 		extern ComPtr<ID3D11VertexShader> normalVS;
 		extern ComPtr<ID3D11GeometryShader> normalGS;
 		extern ComPtr<ID3D11PixelShader> normalPS;
+		extern ComPtr<ID3D11VertexShader> cubeMapVS;
+		extern ComPtr<ID3D11PixelShader> cubeMapPS;
 
 		extern ComPtr<ID3D11InputLayout> basicIL;
 
@@ -33,6 +35,8 @@ namespace Engine
 		extern GraphicsPSO normalPSO;
 		extern GraphicsPSO solidNoneCullPSO;
 		extern GraphicsPSO wireNoneCullPSO;
+		extern GraphicsPSO cubeMapSolidPSO;
+		extern GraphicsPSO cubeMapWirePSO;
 		
 		void InitGraphicsPSO(ComPtr<ID3D11Device>& device);
 

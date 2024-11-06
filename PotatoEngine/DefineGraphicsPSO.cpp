@@ -15,6 +15,8 @@ namespace Engine
 		ComPtr<ID3D11VertexShader> normalVS;
 		ComPtr<ID3D11GeometryShader> normalGS;
 		ComPtr<ID3D11PixelShader> normalPS;
+		ComPtr<ID3D11VertexShader> cubeMapVS;
+		ComPtr<ID3D11PixelShader> cubeMapPS;
 
 		ComPtr<ID3D11InputLayout> basicIL;
 
@@ -27,6 +29,8 @@ namespace Engine
 		GraphicsPSO normalPSO;
 		GraphicsPSO solidNoneCullPSO;
 		GraphicsPSO wireNoneCullPSO;
+		GraphicsPSO cubeMapSolidPSO;
+		GraphicsPSO cubeMapWirePSO;
 	}
 
 	void PSO::InitGraphicsPSO(ComPtr<ID3D11Device>& device) {
@@ -52,7 +56,11 @@ namespace Engine
 		solidNoneCullPSO.rasterizerState = solidNoneCullRS; 
 
 		wireNoneCullPSO = defaultWirePSO;
-		wireNoneCullPSO.rasterizerState = wireNoneCullRS;
+		wireNoneCullPSO.rasterizerState = wireNoneCullRS; 
+
+		cubeMapSolidPSO = defaultSolidPSO;
+		cubeMapSolidPSO.vertexShader = cubeMapVS;
+		cubeMapSolidPSO.pixelShader = cubeMapPS;
 	}
 
 	void PSO::InitShader(ComPtr<ID3D11Device>& device) {
@@ -67,7 +75,10 @@ namespace Engine
 
 		D3D11Utils::CreateVertexShaderAndInputLayout(device, L"NormalVS.hlsl", basicIEs, normalVS, basicIL); 
 		D3D11Utils::CreateGeometryShader(device, L"NormalGS.hlsl", normalGS);
-		D3D11Utils::CreatePixelShader(device, L"NormalPS.hlsl", normalPS);
+		D3D11Utils::CreatePixelShader(device, L"NormalPS.hlsl", normalPS); 
+
+		D3D11Utils::CreateVertexShaderAndInputLayout(device, L"CubeMapVS.hlsl", basicIEs, cubeMapVS, basicIL);
+		D3D11Utils::CreatePixelShader(device, L"CubeMapPS.hlsl", cubeMapPS);
 
 	}
 

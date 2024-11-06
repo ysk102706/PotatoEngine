@@ -13,13 +13,27 @@ namespace Engine
 	using DirectX::SimpleMath::Vector3; 
 	using DirectX::SimpleMath::Matrix; 
 
-	struct Material {
+	struct PhongShading {
 		Vector3 ambient; 
 		float shininess;
 		Vector3 diffuse;
 		float dummy1;
 		Vector3 specular;
-		float dummy2;
+		float dummy2; 
+	}; 
+
+	struct RimEffect {
+		bool useRim;
+		Vector3 color;
+		float strength;
+		float factor;
+		bool useSmoothStep;
+		float dummy;
+	}; 
+
+	struct FresnelEffect {
+		bool useFresnel; 
+		Vector3 fresnelR0;
 	};
 
 	struct ModelConstantData {
@@ -28,7 +42,9 @@ namespace Engine
 	}; 
 
 	struct MaterialConstantData {
-		Material mat; 
+		PhongShading mat; 
+		RimEffect rim;
+		FresnelEffect fresnel;
 	};
 
 	class Model {

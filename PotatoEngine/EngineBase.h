@@ -7,7 +7,8 @@
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h> 
 #include <directxtk/SimpleMath.h>
-#include "GraphicsPSO.h"
+#include "GraphicsPSO.h" 
+#include <string>
 
 namespace Engine { 
 	using Microsoft::WRL::ComPtr; 
@@ -29,7 +30,7 @@ namespace Engine {
 		Matrix view;
 		Matrix proj; 
 		Vector3 eyePos;
-		float dummy; 
+		float envStrength; 
 		Light light;
 	};
 
@@ -41,10 +42,12 @@ namespace Engine {
 
 		bool InitD3D();
 		bool InitWindow(); 
-		bool InitImGui();
+		bool InitImGui(); 
 
 		void CreateBuffer(); 
 		void CreateDepthBuffer();
+		void CreateCubeMap(std::wstring path, std::wstring env, std::wstring diffuse, std::wstring specular);
+
 		void SetDefaultViewport(); 
 
 		void Run();
@@ -73,7 +76,11 @@ namespace Engine {
 		D3D11_VIEWPORT m_viewport; 
 
 		GlobalConstantData globalConstantCPU; 
-		ComPtr<ID3D11Buffer> globalConstantGPU;
+		ComPtr<ID3D11Buffer> globalConstantGPU; 
+		
+		ComPtr<ID3D11ShaderResourceView> m_envSRV;
+		ComPtr<ID3D11ShaderResourceView> m_diffuseSRV;
+		ComPtr<ID3D11ShaderResourceView> m_specularSRV;
 		
 	};
 }

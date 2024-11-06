@@ -31,10 +31,6 @@ namespace Engine {
 		device->CreatePixelShader(psBuffer->GetBufferPointer(), psBuffer->GetBufferSize(), 0, pixelShader.GetAddressOf());
 	}
 
-
-
-
-
 	void D3D11Utils::CreateIndexBuffer(ComPtr<ID3D11Device>& device, const std::vector<uint32_t>& indices, ComPtr<ID3D11Buffer>& indexBuffer)
 	{
 		D3D11_BUFFER_DESC id;
@@ -49,5 +45,5 @@ namespace Engine {
 		isd.pSysMem = indices.data();
 
 		device->CreateBuffer(&id, &isd, indexBuffer.GetAddressOf());
-	}
+	} 
 }

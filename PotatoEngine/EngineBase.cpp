@@ -1,6 +1,7 @@
 #include "EngineBase.h" 
 #include <iostream>
 #include "DefineGraphicsPSO.h"
+#include "ResourceLoader.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd,
 	UINT msg,
@@ -152,6 +153,13 @@ namespace Engine {
 		ComPtr<ID3D11Texture2D> depthStencilBuffer; 
 		m_device->CreateTexture2D(&td, 0, depthStencilBuffer.GetAddressOf());
 		m_device->CreateDepthStencilView(depthStencilBuffer.Get(), 0, m_DSV.GetAddressOf());
+	}
+
+	void EngineBase::CreateCubeMap(std::wstring path, std::wstring env, std::wstring diffuse, std::wstring specular)
+	{ 
+		ResourceLoader::CreateDDSTexture(m_device, (path + env).c_str(), true, m_envSRV);
+		ResourceLoader::CreateDDSTexture(m_device, (path + diffuse).c_str(), true, m_diffuseSRV);
+		ResourceLoader::CreateDDSTexture(m_device, (path + specular).c_str(), true, m_specularSRV);
 	}
 
 	void EngineBase::SetDefaultViewport()

@@ -13,7 +13,9 @@
 #include <assimp\Importer.hpp>
 #include <assimp\postprocess.h>
 #include <assimp\scene.h>
-#include <directxtk/SimpleMath.h>
+#include <directxtk/SimpleMath.h> 
+
+#include <directxtk/DDSTextureLoader.h>
 
 namespace Engine {
 	using DirectX::SimpleMath::Vector3;
@@ -193,5 +195,16 @@ namespace Engine {
 		else std::cout << "Failed to read file " << path + filename << '\n';
 
 		return ModelLoad::meshes;
+	} 
+
+	void ResourceLoader::CreateDDSTexture(ComPtr<ID3D11Device>& device, const wchar_t* filepath, bool isCubeMap, ComPtr<ID3D11ShaderResourceView>& srv)
+	{
+		ComPtr<ID3D11Texture2D> texture;
+
+		UINT miscFlags = 0;
+		DirectX::CreateDDSTextureFromFileEx(
+			device.Get(), filepath, 0, D3D11_USAGE_DEFAULT,
+			D3D11_BIND_SHADER_RESOURCE, 0, miscFlags, DirectX::DX11::DDS_LOADER_FLAGS(false), 
+			(ID3D11Resource **)texture.GetAddressOf(), srv.GetAddressOf(), 0); 
 	}
 }
