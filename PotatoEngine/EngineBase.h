@@ -9,6 +9,7 @@
 #include <directxtk/SimpleMath.h>
 #include "GraphicsPSO.h" 
 #include <string>
+#include "PostProcess.h" 
 
 namespace Engine { 
 	using Microsoft::WRL::ComPtr; 
@@ -72,7 +73,7 @@ namespace Engine {
 		ComPtr<ID3D11RenderTargetView> m_backBufferRTV;
 
 		ComPtr<ID3D11DepthStencilView> m_DSV;
-
+		
 		D3D11_VIEWPORT m_viewport; 
 
 		GlobalConstantData globalConstantCPU; 
@@ -80,7 +81,12 @@ namespace Engine {
 		
 		ComPtr<ID3D11ShaderResourceView> m_envSRV;
 		ComPtr<ID3D11ShaderResourceView> m_diffuseSRV;
-		ComPtr<ID3D11ShaderResourceView> m_specularSRV;
+		ComPtr<ID3D11ShaderResourceView> m_specularSRV; 
+
+		PostProcess postProcess; 
+		ComPtr<ID3D11Texture2D> postProcessBuffer; 
+		ComPtr<ID3D11RenderTargetView> postProcessRTV;
+		ComPtr<ID3D11ShaderResourceView> postProcessSRV;
 		
 	};
 }

@@ -9,20 +9,37 @@ namespace Engine
 		ComPtr<ID3D11RasterizerState> wireRS;
 		ComPtr<ID3D11RasterizerState> solidNoneCullRS;
 		ComPtr<ID3D11RasterizerState> wireNoneCullRS;
+		ComPtr<ID3D11RasterizerState> postProcessRS; 
+
+
 
 		ComPtr<ID3D11VertexShader> basicVS;
 		ComPtr<ID3D11PixelShader>  basicPS;
+
 		ComPtr<ID3D11VertexShader> normalVS;
 		ComPtr<ID3D11GeometryShader> normalGS;
 		ComPtr<ID3D11PixelShader> normalPS;
+
 		ComPtr<ID3D11VertexShader> cubeMapVS;
 		ComPtr<ID3D11PixelShader> cubeMapPS;
 
+		ComPtr<ID3D11VertexShader> samplingVS;
+		ComPtr<ID3D11PixelShader> samplingPS;
+		ComPtr<ID3D11PixelShader> bloomDownPS;
+		ComPtr<ID3D11PixelShader> bloomUpPS;
+		ComPtr<ID3D11PixelShader> combinePS;
+
+
+
 		ComPtr<ID3D11InputLayout> basicIL;
+
+
 
 		ComPtr<ID3D11SamplerState> linearWarpSS;
 		ComPtr<ID3D11SamplerState> linearClampSS;
 		std::vector<ID3D11SamplerState*> samplerStates;
+
+
 
 		GraphicsPSO defaultSolidPSO;
 		GraphicsPSO defaultWirePSO;
@@ -31,6 +48,7 @@ namespace Engine
 		GraphicsPSO wireNoneCullPSO;
 		GraphicsPSO cubeMapSolidPSO;
 		GraphicsPSO cubeMapWirePSO;
+		GraphicsPSO postProcessPSO;
 	}
 
 	void PSO::InitGraphicsPSO(ComPtr<ID3D11Device>& device) {
@@ -60,7 +78,12 @@ namespace Engine
 
 		cubeMapSolidPSO = defaultSolidPSO;
 		cubeMapSolidPSO.vertexShader = cubeMapVS;
-		cubeMapSolidPSO.pixelShader = cubeMapPS;
+		cubeMapSolidPSO.pixelShader = cubeMapPS; 
+
+		postProcessPSO = defaultSolidPSO;
+		postProcessPSO.vertexShader = samplingVS;
+		postProcessPSO.pixelShader = samplingPS;
+		postProcessPSO.rasterizerState = postProcessRS; 
 	}
 
 	void PSO::InitShader(ComPtr<ID3D11Device>& device) {
@@ -78,8 +101,13 @@ namespace Engine
 		D3D11Utils::CreatePixelShader(device, L"NormalPS.hlsl", normalPS); 
 
 		D3D11Utils::CreateVertexShaderAndInputLayout(device, L"CubeMapVS.hlsl", basicIEs, cubeMapVS, basicIL);
-		D3D11Utils::CreatePixelShader(device, L"CubeMapPS.hlsl", cubeMapPS);
+		D3D11Utils::CreatePixelShader(device, L"CubeMapPS.hlsl", cubeMapPS); 
 
+		D3D11Utils::CreateVertexShaderAndInputLayout(device, L"SamplingVS.hlsl", basicIEs, samplingVS, basicIL); 
+		D3D11Utils::CreatePixelShader(device, L"SamplingPS.hlsl", samplingPS);
+		D3D11Utils::CreatePixelShader(device, L"BloomDownPS.hlsl", bloomDownPS);
+		D3D11Utils::CreatePixelShader(device, L"BloomUpPS.hlsl", bloomUpPS);
+		D3D11Utils::CreatePixelShader(device, L"CombinePS.hlsl", combinePS); 
 	}
 
 	void PSO::InitRasterizerState(ComPtr<ID3D11Device>& device) {
@@ -103,9 +131,14 @@ namespace Engine
 
 		rd.CullMode = D3D11_CULL_BACK;
 
-		device->CreateRasterizerState(&rd, wireRS.GetAddressOf());
+		device->CreateRasterizerState(&rd, wireRS.GetAddressOf()); 
 
+		rd.FillMode = D3D11_FILL_SOLID;
+		rd.CullMode = D3D11_CULL_NONE;
+		rd.FrontCounterClockwise = false; 
+		rd.DepthClipEnable = false; 
 
+		device->CreateRasterizerState(&rd, postProcessRS.GetAddressOf()); 
 	}
 
 	void PSO::InitSamplerState(ComPtr<ID3D11Device>& device)

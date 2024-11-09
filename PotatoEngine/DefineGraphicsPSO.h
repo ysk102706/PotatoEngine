@@ -15,20 +15,37 @@ namespace Engine
 		extern ComPtr<ID3D11RasterizerState> wireRS;
 		extern ComPtr<ID3D11RasterizerState> solidNoneCullRS;
 		extern ComPtr<ID3D11RasterizerState> wireNoneCullRS;
+		extern ComPtr<ID3D11RasterizerState> postProcessRS;
+
+
 
 		extern ComPtr<ID3D11VertexShader> basicVS;
 		extern ComPtr<ID3D11PixelShader>  basicPS;
+
 		extern ComPtr<ID3D11VertexShader> normalVS;
 		extern ComPtr<ID3D11GeometryShader> normalGS;
 		extern ComPtr<ID3D11PixelShader> normalPS;
+		
 		extern ComPtr<ID3D11VertexShader> cubeMapVS;
-		extern ComPtr<ID3D11PixelShader> cubeMapPS;
+		extern ComPtr<ID3D11PixelShader> cubeMapPS; 
+		
+		extern ComPtr<ID3D11VertexShader> samplingVS;
+		extern ComPtr<ID3D11PixelShader> samplingPS; 
+		extern ComPtr<ID3D11PixelShader> bloomDownPS;
+		extern ComPtr<ID3D11PixelShader> bloomUpPS; 
+		extern ComPtr<ID3D11PixelShader> combinePS; 
+
+
 
 		extern ComPtr<ID3D11InputLayout> basicIL;
+
+
 
 		extern ComPtr<ID3D11SamplerState> linearWarpSS;
 		extern ComPtr<ID3D11SamplerState> linearClampSS;
 		extern std::vector<ID3D11SamplerState*> samplerStates;
+		
+
 
 		extern GraphicsPSO defaultSolidPSO;
 		extern GraphicsPSO defaultWirePSO; 
@@ -36,7 +53,8 @@ namespace Engine
 		extern GraphicsPSO solidNoneCullPSO;
 		extern GraphicsPSO wireNoneCullPSO;
 		extern GraphicsPSO cubeMapSolidPSO;
-		extern GraphicsPSO cubeMapWirePSO;
+		extern GraphicsPSO cubeMapWirePSO; 
+		extern GraphicsPSO postProcessPSO; 
 		
 		void InitGraphicsPSO(ComPtr<ID3D11Device>& device);
 

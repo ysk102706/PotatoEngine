@@ -130,9 +130,28 @@ namespace Engine {
 		else {
 			std::cout << "Create RTV failed\n";
 		} 
+		
+		D3D11_TEXTURE2D_DESC td; 
+		ZeroMemory(&td, sizeof(td));
+		td.Width = width;
+		td.Height = height;
+		td.MipLevels = td.ArraySize = 1; 
+		td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE; 
+		td.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; 
+		td.Usage = D3D11_USAGE_DEFAULT;
+		td.CPUAccessFlags = 0; 
+		td.MiscFlags = 0; 
+		td.SampleDesc.Count = 1;
+		td.SampleDesc.Quality = 0; 
 
-		CreateDepthBuffer();
-	}
+		m_device->CreateTexture2D(&td, 0, postProcessBuffer.GetAddressOf()); 
+		m_device->CreateRenderTargetView(postProcessBuffer.Get(), 0, postProcessRTV.GetAddressOf()); 
+		m_device->CreateShaderResourceView(postProcessBuffer.Get(), 0, postProcessSRV.GetAddressOf());
+
+		CreateDepthBuffer(); 
+
+		postProcess.Initialize(m_device, m_context, width, height, { m_backBufferRTV.Get() }, { postProcessSRV.Get() }, 5); 
+ 	} 
 
 	void EngineBase::CreateDepthBuffer()
 	{

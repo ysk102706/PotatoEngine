@@ -27,10 +27,10 @@ namespace Engine {
 		//auto meshData = DefaultObjectGenerator::MakeSquareGrid(1.0f, 3, 2); 
 		//auto meshData = DefaultObjectGenerator::MakeBox(1.0f);
 		//auto meshData = DefaultObjectGenerator::MakeCylinder(1.0f, 1.5f, 2.0f, 20, 5); 
-		auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 20, 20); 
+		auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 50, 50); 
 		//auto meshData = DefaultObjectGenerator::ReadFromFile("../Resources/3D_Model/", "stanford_dragon.stl", false);
-		//meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
-		//meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
+		meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
+		meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
 		meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
 		auto model = std::make_shared<Model>(m_device, m_context, std::vector{ meshData });
 		//auto model = std::make_shared<Model>(m_device, m_context, meshData);
@@ -59,6 +59,9 @@ namespace Engine {
 		for (auto& a : m_objectList) {
 			a->UpdateConstantBuffer(m_context);
 		} 
+
+		postProcess.samplingFilter.UpdateConstantBuffer(m_context);
+		postProcess.combineFilter.UpdateConstantBuffer(m_context);
 	}
 
 	void MainEngine::Render()
@@ -75,9 +78,9 @@ namespace Engine {
 
 		SetGlobalConstant(); 
 
-		m_context->OMSetRenderTargets(1, m_backBufferRTV.GetAddressOf(), m_DSV.Get());
+		m_context->OMSetRenderTargets(1, postProcessRTV.GetAddressOf(), m_DSV.Get());
 		float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		m_context->ClearRenderTargetView(m_backBufferRTV.Get(), color);  
+		m_context->ClearRenderTargetView(postProcessRTV.Get(), color);  
 		m_context->ClearDepthStencilView(m_DSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0.0f);
 
 		SetGraphicsPSO(useWire ? PSO::cubeMapWirePSO : PSO::cubeMapSolidPSO); 
@@ -97,12 +100,15 @@ namespace Engine {
 			for (auto& a : m_objectList) {
 				a->NormalRender(m_context);
 			}
-		}
+		} 
+
+		SetGraphicsPSO(PSO::postProcessPSO);
+		postProcess.Render(m_context); 
 	}
 
 	namespace GUI {
 		float diffuse;
-		float specular;
+		float specular; 
 	}
 
 	void MainEngine::UpdateGUI() { 
@@ -139,6 +145,13 @@ namespace Engine {
 		if (ImGui::TreeNode("Fresnel")) {
 			ImGui::Checkbox("useFresnel", &m_objectList[0]->materialConstantCPU.fresnel.useFresnel);
 			ImGui::SliderFloat3("fresnelR0", &m_objectList[0]->materialConstantCPU.fresnel.fresnelR0.x, 0.0f, 1.0f);
+
+			ImGui::TreePop();
+		}
+		
+		if (ImGui::TreeNode("PostProcess")) { 
+			ImGui::Checkbox("useSampling", &postProcess.samplingFilter.useSamplingFilter); 
+			ImGui::SliderFloat("strength", &postProcess.combineFilter.imageFilterConstantCPU.bloomStrength, 0.0, 1.0);
 
 			ImGui::TreePop();
 		}

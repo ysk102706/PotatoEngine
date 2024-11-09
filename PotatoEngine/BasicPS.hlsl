@@ -15,10 +15,16 @@ cbuffer MaterialConstantData : register(b0)
 float4 main(PSInput input) : SV_TARGET
 {
     float3 toEye = normalize(eyePos - input.posWorld);
+    float3 toLight = normalize(light.pos - input.posWorld); 
+    float3 halfway = normalize(toEye + toLight);
+    
+    float NdotV = saturate(dot(input.normalWorld, toEye)); 
+    float NdotH = saturate(dot(input.normalWorld, halfway)); 
     
     //float3 color = float3(0.0, 0.0, 0.0);
     
-    //color += DirectionalLight(light, toEye, input.normalWorld, mat);
+    //color += DirectionalLight(light, toEye, input.normalWorld, mat); 
+    
     float4 diffuse = diffuseTex.Sample(linearWarpSS, input.normalWorld);
     float4 specular = specularTex.Sample(linearWarpSS, reflect(-toEye, input.normalWorld));
     
@@ -29,7 +35,7 @@ float4 main(PSInput input) : SV_TARGET
     
     if (fresnel.useFresnel)
     { 
-        specular.xyz *= SchlickFresnel(fresnel, input.normalWorld, toEye);
+        specular.xyz *= SchlickFresnel_UnrealEngine4(fresnel.fresnelR0, NdotH);
     }
     
     diffuse *= Tex.Sample(linearWarpSS, input.texcoord); 

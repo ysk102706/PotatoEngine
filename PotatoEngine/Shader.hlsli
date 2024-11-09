@@ -54,6 +54,13 @@ cbuffer globalConstantData : register(b1)
     Light light;
 }; 
 
+cbuffer PostProcessConstantData : register(b2)
+{
+    float2 pixelDelta;
+    float bloomStrength;
+    float threshold;
+};
+
 struct VSInput
 {
     float3 pos : POSITION;
