@@ -19,23 +19,23 @@ float4 main(PSInput input) : SV_TARGET
     float3 halfway = normalize(toEye + toLight);
     
     float NdotV = saturate(dot(input.normalWorld, toEye)); 
-    float NdotH = saturate(dot(input.normalWorld, halfway)); 
+    float VdotH = saturate(dot(toEye, halfway)); 
     
     //float3 color = float3(0.0, 0.0, 0.0);
     
     //color += DirectionalLight(light, toEye, input.normalWorld, mat); 
     
-    float4 diffuse = diffuseTex.Sample(linearWarpSS, input.normalWorld);
+    float4 diffuse = diffuseTex.Sample(linearWarpSS, input.normalWorld); 
     float4 specular = specularTex.Sample(linearWarpSS, reflect(-toEye, input.normalWorld));
     
     specular *= pow((specular.x + specular.y + specular.z) / 3.0, mat.shininess);
     
     diffuse.xyz *= mat.diffuse;
-    specular.xyz *= mat.specular;
+    specular.xyz *= mat.specular; 
     
     if (fresnel.useFresnel)
     { 
-        specular.xyz *= SchlickFresnel_UnrealEngine4(fresnel.fresnelR0, NdotH);
+        specular.xyz *= SchlickFresnel_UnrealEngine4(fresnel.fresnelR0, VdotH);
     }
     
     diffuse *= Tex.Sample(linearWarpSS, input.texcoord); 

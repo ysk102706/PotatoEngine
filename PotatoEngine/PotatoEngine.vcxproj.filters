@@ -51,6 +51,9 @@
     <ClCompile Include="ImageFilter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineBase.h">
@@ -90,6 +93,9 @@
       <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="ImageFilter.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
