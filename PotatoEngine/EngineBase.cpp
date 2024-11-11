@@ -9,14 +9,53 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd,
 	LPARAM lParam);
 
 namespace Engine { 
+	namespace Input {
+		bool pressedKey[256];
+
+		bool useCameraRotate;
+		Vector2 cameraLastPos;
+		Vector2 cameraDeltaPos;
+	}
+
 	LRESULT WINAPI WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
 			return true;
 
+		switch (uMsg) {
+		case WM_KEYDOWN:
+			Input::pressedKey[wParam] = true; 
+			
+			if (wParam == VK_ESCAPE) { 
+				DestroyWindow(hwnd);
+			} 
+
+			if (wParam == 'F') {
+				Input::useCameraRotate = !Input::useCameraRotate;
+			}
+
+			break; 
+		case WM_KEYUP: 
+			Input::pressedKey[wParam] = false; 
+			break; 
+		case WM_MOUSEMOVE: { 
+			auto curPosX = LOWORD(lParam);
+			auto curPosY = HIWORD(lParam);
+			if (Input::useCameraRotate) {
+				Input::cameraDeltaPos = Vector2(curPosX - Input::cameraLastPos.x, curPosY - Input::cameraLastPos.y);
+				std::cout << Input::cameraDeltaPos.x << " " << Input::cameraDeltaPos.y << '\n';
+			}
+			Input::cameraLastPos = Vector2(curPosX, curPosY);
+			break;
+		} 
+		case WM_DESTROY: 
+			PostQuitMessage(0); 
+			return 0; 
+		}
+
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
-
-	EngineBase::EngineBase() : width(2880), height(1600), m_window(0), m_viewport(D3D11_VIEWPORT())
+	
+	EngineBase::EngineBase() : width(2880), height(1800), m_window(0), m_viewport(D3D11_VIEWPORT())
 	{
 	}
 
@@ -28,7 +67,10 @@ namespace Engine {
 	{
 		if (!InitWindow()) return false;
 		if (!InitD3D()) return false;
-		if (!InitImGui()) return false;
+		if (!InitImGui()) return false; 
+
+		ZeroMemory(&Input::pressedKey, sizeof(Input::pressedKey));
+		Input::cameraLastPos = Vector2(width / 2.0f, height / 2.0f); 
 
 		return true;
 	}
@@ -45,7 +87,7 @@ namespace Engine {
 		sd.BufferCount = 2;
 		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		sd.OutputWindow = m_window;
-		sd.Windowed = true;
+		sd.Windowed = true; 
 		sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		sd.SampleDesc.Count = 1;
@@ -245,14 +287,34 @@ namespace Engine {
 		m_context->PSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf());
 	}
 
-	void EngineBase::UpdateGlobalConstant()
+	void EngineBase::UpdateGlobalConstant(Matrix view, Matrix proj, Vector3 eyePos) 
 	{
-		globalConstantCPU.view = DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f });
-		globalConstantCPU.view = globalConstantCPU.view.Transpose();
-		globalConstantCPU.proj = DirectX::XMMatrixPerspectiveFovLH(70.0f * DirectX::XM_PI / 180.0f, width / height, 0.1f, 1000.0f); 
-		globalConstantCPU.proj = globalConstantCPU.proj.Transpose(); 
-		globalConstantCPU.eyePos = Vector3(0.0f, 0.0f, -2.0f); 
+		globalConstantCPU.view = view.Transpose();
+		globalConstantCPU.proj = proj.Transpose(); 
+		globalConstantCPU.eyePos = eyePos;
 
 		D3D11Utils::UpdateConstantBuffer(m_context, globalConstantCPU, globalConstantGPU);
+	} 
+	
+	void EngineBase::InputProcess()
+	{ 
+		float dt = ImGui::GetIO().DeltaTime; 
+
+		if (Input::pressedKey['W']) camera.MoveForward(dt); 
+		if (Input::pressedKey['S']) camera.MoveForward(-dt); 
+		if (Input::pressedKey['D']) camera.MoveRight(dt); 
+		if (Input::pressedKey['A']) camera.MoveRight(-dt); 
+		if (Input::pressedKey['Q']) camera.MoveUp(dt); 
+		if (Input::pressedKey['E']) camera.MoveUp(-dt); 
+	} 
+
+	void EngineBase::EulerCalc()
+	{ 
+		float yaw = Input::cameraDeltaPos.x * DirectX::XM_2PI / width; 
+		float pitch = Input::cameraDeltaPos.y * DirectX::XM_PI / height; 
+		
+		camera.Rotate(yaw, pitch); 
+
+		Input::cameraDeltaPos = Vector2(0.0f); 
 	}
-}
+} 

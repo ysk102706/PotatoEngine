@@ -10,6 +10,7 @@
 #include "GraphicsPSO.h" 
 #include <string>
 #include "PostProcess.h" 
+#include "Camera.h" 
 
 namespace Engine { 
 	using Microsoft::WRL::ComPtr; 
@@ -33,7 +34,7 @@ namespace Engine {
 		Vector3 eyePos;
 		float envStrength; 
 		Light light;
-	};
+	}; 
 
 	class EngineBase {
 	public:
@@ -51,7 +52,7 @@ namespace Engine {
 
 		void SetDefaultViewport(); 
 
-		void Run();
+		void Run(); 
 
 		virtual void Render() = 0;
 		virtual void Update() = 0; 
@@ -60,7 +61,10 @@ namespace Engine {
 		void SetGraphicsPSO(const GraphicsPSO& pso);
 
 		void SetGlobalConstant();
-		void UpdateGlobalConstant(); 
+		void UpdateGlobalConstant(Matrix view, Matrix proj, Vector3 eyePos); 
+
+		void InputProcess(); 
+		void EulerCalc();
 
 		float width;
 		float height;
@@ -86,7 +90,9 @@ namespace Engine {
 		PostProcess postProcess; 
 		ComPtr<ID3D11Texture2D> postProcessBuffer; 
 		ComPtr<ID3D11RenderTargetView> postProcessRTV;
-		ComPtr<ID3D11ShaderResourceView> postProcessSRV;
+		ComPtr<ID3D11ShaderResourceView> postProcessSRV; 
 		
+		Camera camera; 
+
 	};
 }

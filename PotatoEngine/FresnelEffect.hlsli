@@ -32,6 +32,6 @@ float3 CookTorranceFresnel(float3 SpecularColor, float VdotH)
 {
     float3 SpecularColorSqrt = sqrt(clamp(SpecularColor, float3(0, 0, 0), float3(0.99, 0.99, 0.99)));
     float3 n = (1 + SpecularColorSqrt) / (1 - SpecularColorSqrt);
-    float3 g = sqrt(n * n + VdotH * VdotH - 1);
+    float3 g = sqrt(n * n + VdotH * VdotH - 1); 
     return 0.5 * pow((g - VdotH) / (g + VdotH), 2) * (1 + pow(((g + VdotH) * VdotH - 1) / ((g - VdotH) * VdotH + 1), 2));
 }

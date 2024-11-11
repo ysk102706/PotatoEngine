@@ -45,7 +45,14 @@ namespace Engine {
 
 	void MainEngine::Update()
 	{ 
-		UpdateGlobalConstant();
+		InputProcess(); 
+		EulerCalc(); 
+
+		Matrix view = camera.GetView();
+		Matrix proj = camera.GetProj();
+		Vector3 eyePos = camera.GetPos(); 
+
+		UpdateGlobalConstant(view, proj, eyePos); 
 
 		static float rot = 0;
 		//rot += 0.002f;
@@ -112,6 +119,7 @@ namespace Engine {
 	}
 
 	void MainEngine::UpdateGUI() { 
+
 		if (ImGui::TreeNode("Resterizer")) {
 			ImGui::Checkbox("useWire", &useWire);
 			ImGui::Checkbox("useNormal", &useNormal);
