@@ -11,11 +11,15 @@
 #include <string>
 #include "PostProcess.h" 
 #include "Camera.h" 
+#include "Model.h" 
+#include "Billboard.h" 
 
 namespace Engine { 
 	using Microsoft::WRL::ComPtr; 
 	using DirectX::SimpleMath::Vector3; 
+	using DirectX::SimpleMath::Vector4; 
 	using DirectX::SimpleMath::Matrix; 
+	using DirectX::SimpleMath::Ray; 
 
 	struct Light { 
 		Vector3 pos; 
@@ -31,7 +35,7 @@ namespace Engine {
 	struct GlobalConstantData {
 		Matrix view;
 		Matrix proj; 
-		Vector3 eyePos;
+		Vector3 eyePos; 
 		float envStrength; 
 		Light light;
 	}; 
@@ -64,7 +68,9 @@ namespace Engine {
 		void UpdateGlobalConstant(Matrix view, Matrix proj, Vector3 eyePos); 
 
 		void InputProcess(); 
-		void EulerCalc();
+		void EulerCalc(); 
+
+		bool MousePicking(DirectX::BoundingSphere& bs, Quaternion& q, Vector3& dragTranslation, Vector3& pickPoint);
 
 		float width;
 		float height;
@@ -93,6 +99,11 @@ namespace Engine {
 		ComPtr<ID3D11ShaderResourceView> postProcessSRV; 
 		
 		Camera camera; 
+
+		DirectX::BoundingSphere m_objectBS; 
+		std::shared_ptr<Model> m_cursorSphere; 
+
+		Billboard billboards; 
 
 	};
 }

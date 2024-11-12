@@ -10,18 +10,22 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd,
 
 namespace Engine { 
 	namespace Input {
-		bool pressedKey[256];
+		bool pressedKey[256]; 
+		bool mouseLeftButton; 
+		bool mouseRightButton; 
+		bool mouseDragFlag; 
 
 		bool useCameraRotate;
-		Vector2 cameraLastPos;
-		Vector2 cameraDeltaPos;
+		Vector2 cursorLastPos;
+		Vector2 cursorDeltaPos; 
+		Vector2 cursorNdc; 
 	}
 
 	LRESULT WINAPI WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
 			return true;
 
-		switch (uMsg) {
+		switch (uMsg) { 
 		case WM_KEYDOWN:
 			Input::pressedKey[wParam] = true; 
 			
@@ -41,12 +45,29 @@ namespace Engine {
 			auto curPosX = LOWORD(lParam);
 			auto curPosY = HIWORD(lParam);
 			if (Input::useCameraRotate) {
-				Input::cameraDeltaPos = Vector2(curPosX - Input::cameraLastPos.x, curPosY - Input::cameraLastPos.y);
-				std::cout << Input::cameraDeltaPos.x << " " << Input::cameraDeltaPos.y << '\n';
+				Input::cursorDeltaPos = Vector2(curPosX - Input::cursorLastPos.x, curPosY - Input::cursorLastPos.y);
 			}
-			Input::cameraLastPos = Vector2(curPosX, curPosY);
+			Input::cursorLastPos = Vector2(curPosX, curPosY); 
 			break;
 		} 
+		case WM_LBUTTONDOWN: 
+			if (!Input::mouseLeftButton) {
+				Input::mouseDragFlag = true; 
+			}
+			Input::mouseLeftButton = true; 
+			break; 
+		case WM_LBUTTONUP: 
+			Input::mouseLeftButton = false; 
+			break; 
+		case WM_RBUTTONDOWN: 
+			if (!Input::mouseRightButton) {
+				Input::mouseDragFlag = true; 
+			}
+			Input::mouseRightButton = true; 
+			break; 
+		case WM_RBUTTONUP:
+			Input::mouseRightButton = false; 
+			break; 
 		case WM_DESTROY: 
 			PostQuitMessage(0); 
 			return 0; 
@@ -70,7 +91,7 @@ namespace Engine {
 		if (!InitImGui()) return false; 
 
 		ZeroMemory(&Input::pressedKey, sizeof(Input::pressedKey));
-		Input::cameraLastPos = Vector2(width / 2.0f, height / 2.0f); 
+		Input::cursorLastPos = Vector2(width / 2.0f, height / 2.0f); 
 
 		return true;
 	}
@@ -103,11 +124,11 @@ namespace Engine {
 			0, D3D_DRIVER_TYPE_HARDWARE, 0, 0, 
 			featureLevels, 1, D3D11_SDK_VERSION, &sd, 
 			m_swapChain.GetAddressOf(), m_device.GetAddressOf(), 
-			&featureLevel, m_context.GetAddressOf());
+			&featureLevel, m_context.GetAddressOf()); 
 
 		if (FAILED(ret)) return false; 
 		
-		PSO::InitGraphicsPSO(m_device);
+		PSO::InitGraphicsPSO(m_device); 
 
 		CreateBuffer();
 
@@ -310,11 +331,88 @@ namespace Engine {
 
 	void EngineBase::EulerCalc()
 	{ 
-		float yaw = Input::cameraDeltaPos.x * DirectX::XM_2PI / width; 
-		float pitch = Input::cameraDeltaPos.y * DirectX::XM_PI / height; 
+		float yaw = Input::cursorDeltaPos.x * DirectX::XM_2PI / width; 
+		float pitch = Input::cursorDeltaPos.y * DirectX::XM_PI / height; 
 		
 		camera.Rotate(yaw, pitch); 
 
-		Input::cameraDeltaPos = Vector2(0.0f); 
+		Input::cursorDeltaPos = Vector2(0.0f); 
+	}
+
+	bool EngineBase::MousePicking(DirectX::BoundingSphere& bs, Quaternion& q, Vector3& dragTranslation, Vector3& pickPoint)
+	{ 
+		static Vector3 prePos = Vector3(0.0f); 
+		static Vector3 preVector = Vector3(0.0f); 
+		static float preRatio = 0.0f;
+
+		Matrix view = camera.GetView();
+		Matrix proj = camera.GetProj(); 
+		Matrix NdcToWorld = (view * proj).Invert(); 
+
+		Vector2 cursorNdc = Vector2(Input::cursorLastPos.x * 2 / width - 1.0f, -Input::cursorLastPos.y * 2 / height + 1.0f);
+		Vector3 zNearNdc = Vector3(cursorNdc.x, cursorNdc.y, 0.0f); 
+		Vector3 zFarNdc = Vector3(cursorNdc.x, cursorNdc.y, 1.0f); 
+
+		Vector3 zNearWorld = Vector3::Transform(zNearNdc, NdcToWorld);
+		Vector3 zFarWorld = Vector3::Transform(zFarNdc, NdcToWorld); 
+		Vector3 dir = zFarWorld - zNearWorld;
+		dir.Normalize(); 
+
+		Ray ray = Ray(zNearWorld, dir);
+		float dist = 0.0f; 
+
+		q = Quaternion::CreateFromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), 0.0f);
+		dragTranslation = Vector3(0.0f);
+
+		if (Input::mouseLeftButton) {
+			if (ray.Intersects(bs, dist)) {
+				pickPoint = zNearWorld + dir * dist;
+
+				if (Input::mouseDragFlag) {
+					Input::mouseDragFlag = false;
+					preVector = pickPoint - bs.Center;
+					preVector.Normalize(); 
+				}
+				else {
+					Vector3 curVector = pickPoint - bs.Center;
+					curVector.Normalize();
+
+					float theta = acos(preVector.Dot(curVector));
+					if (theta > 3.0f * DirectX::XM_PI / 180.0f) {
+						Vector3 axis = preVector.Cross(curVector);
+						axis.Normalize();
+						q = Quaternion::CreateFromAxisAngle(axis, theta);
+
+						preVector = curVector;
+					}
+				}
+
+				return true;
+			}
+		}
+
+		if (Input::mouseRightButton) {
+			if (ray.Intersects(bs, dist)) {
+				pickPoint = zNearWorld + dir * dist;
+
+				if (Input::mouseDragFlag) {
+					Input::mouseDragFlag = false; 
+					preRatio = dist / (zFarWorld - zNearWorld).Length(); 
+					prePos = pickPoint;
+				}
+				else {
+					Vector3 curPos = zNearWorld + preRatio * (zFarWorld - zNearWorld); 
+
+					if ((curPos - prePos).Length() > 1e-3) {
+						dragTranslation = curPos - prePos;
+						prePos = curPos; 
+					}
+				}
+
+				return true; 
+			} 
+		} 
+
+		return false; 
 	}
 } 

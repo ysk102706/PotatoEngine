@@ -236,7 +236,7 @@ namespace Engine {
             for (int j = 0; j <= column; j++) {
                 Vertex v;
 
-                v.position = Vector3(cos(angleY) * radius * cos(angleX), sin(angleX) * radius, sin(angleY) * radius * cos(angleX));
+                v.position = Vector3(cos(angleY) * radius * cos(angleX), sin(angleX) * radius, sin(angleY) * radius * cos(angleX)); 
                 v.normal = Vector3(cos(angleY) * cos(angleX), sin(angleX), sin(angleY) * cos(angleX)); 
                 v.texcoord = Vector2(float(j) / column, 1 - float(i) / row);
 

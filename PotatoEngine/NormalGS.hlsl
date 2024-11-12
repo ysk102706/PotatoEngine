@@ -20,7 +20,7 @@ struct NormalPSInput
 
 [maxvertexcount(2)]
 void main(point GSInput input[1], inout LineStream<NormalPSInput> outStream)
-{
+{ 
     NormalPSInput output;
     
     float4 posWorld = mul(input[0].pos, world); 

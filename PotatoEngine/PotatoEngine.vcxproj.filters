@@ -54,6 +54,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Billboard.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineBase.h">
@@ -98,6 +101,9 @@
     <ClInclude Include="Camera.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Billboard.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BasicVS.hlsl">
@@ -134,6 +140,15 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="SamplingPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="BillboardVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="BillboardGS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="BillboardPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

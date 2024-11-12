@@ -7,6 +7,7 @@
 #include "DefaultObjectGenerator.h"
 #include "DefineGraphicsPSO.h"
 #include "ResourceLoader.h"
+#include <vector> 
 
 namespace Engine {
 
@@ -18,27 +19,54 @@ namespace Engine {
 	{
 		if (!EngineBase::Initialize()) return false; 
 
+		std::vector<Vector4> billboardPoints; 
+		Vector4 p = Vector4(-20.0f, 1.0f, 20.0f, 1.0f);
+		for (int i = 0; i < 20; i++) {
+			billboardPoints.push_back(p);
+			p.x += 2.0f; 
+		}
+		billboards.Initialize(m_device, m_context, billboardPoints, 1.8f);
+
 		CreateCubeMap(L"../Resources/Texture/CubeMap/", L"SampleEnvMDR.dds", L"SampleDiffuseMDR.dds", L"SampleSpecularMDR.dds");
 		
 		MeshData envMapMeshData = DefaultObjectGenerator::MakeBox(40.0f); 
-		std::reverse(envMapMeshData.indices.begin(), envMapMeshData.indices.end());
-		m_envMap = std::make_shared<Model>(m_device, m_context, std::vector{ envMapMeshData });
+		std::reverse(envMapMeshData.indices.begin(), envMapMeshData.indices.end()); 
+		m_envMap = std::make_shared<Model>(m_device, m_context, std::vector{ envMapMeshData }); 
 
-		//auto meshData = DefaultObjectGenerator::MakeSquareGrid(1.0f, 3, 2); 
-		//auto meshData = DefaultObjectGenerator::MakeBox(1.0f);
-		//auto meshData = DefaultObjectGenerator::MakeCylinder(1.0f, 1.5f, 2.0f, 20, 5); 
-		auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 50, 50); 
-		//auto meshData = DefaultObjectGenerator::ReadFromFile("../Resources/3D_Model/", "stanford_dragon.stl", false);
-		meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
-		meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
-		meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
-		auto model = std::make_shared<Model>(m_device, m_context, std::vector{ meshData });
-		//auto model = std::make_shared<Model>(m_device, m_context, meshData);
-		m_objectList.push_back(model); 
+		{
+			Vector3 pos = Vector3(0.0f, 0.0f, 3.0f);
+			//auto meshData = DefaultObjectGenerator::MakeSquareGrid(1.0f, 3, 2); 
+			//auto meshData = DefaultObjectGenerator::MakeBox(1.0f);
+			//auto meshData = DefaultObjectGenerator::MakeCylinder(1.0f, 1.5f, 2.0f, 20, 5); 
+			auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 50, 50);
+			//auto meshData = DefaultObjectGenerator::ReadFromFile("../Resources/3D_Model/", "stanford_dragon.stl", false);
+			meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
+			meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
+			meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
+			auto model = std::make_shared<Model>(m_device, m_context, std::vector{ meshData }); 
+			//auto model = std::make_shared<Model>(m_device, m_context, meshData); 
+			model->modelConstantCPU.world = Matrix::CreateTranslation(pos).Transpose(); 
+			model->UpdateConstantBuffer(m_context); 
+
+			m_objectList.push_back(model);
+
+			m_objectBS = DirectX::BoundingSphere(pos, 1.5f); 
+		}
+
+		{
+			auto meshData = DefaultObjectGenerator::MakeSphere(0.03f, 10, 10); 
+			m_cursorSphere = std::make_shared<Model>(m_device, m_context, std::vector{ meshData }); 
+			m_cursorSphere->isVisible = false; 
+			m_cursorSphere->materialConstantCPU.useAmbient = true;
+			m_cursorSphere->materialConstantCPU.mat.ambient = Vector3(1.0f, 1.0f, 0.0f); 
+			m_cursorSphere->UpdateConstantBuffer(m_context); 
+
+			m_objectList.push_back(m_cursorSphere); 
+		}
 
 		globalConstantCPU.light.pos = Vector3(0.0f, 0.0f, -1.0f);
 		globalConstantCPU.light.dir = Vector3(0.0f, 0.0f, 1.0f);
-		globalConstantCPU.light.strength = Vector3(1.0f);
+		globalConstantCPU.light.strength = Vector3(1.0f); 
 
 		return true;
 	}
@@ -54,18 +82,28 @@ namespace Engine {
 
 		UpdateGlobalConstant(view, proj, eyePos); 
 
-		static float rot = 0;
-		//rot += 0.002f;
-		for (auto& a : m_objectList) { 
-			//Matrix sr = Matrix::CreateScale(Vector3(1.0f, 1.0f, 1.0f)) * Matrix::CreateRotationX(90 * DirectX::XM_PI / 180) * Matrix::CreateRotationY(rot);
-			Matrix sr = Matrix::CreateScale(Vector3(1.0f, 1.0f, 1.0f)) * Matrix::CreateRotationY(rot);
-			a->modelConstantCPU.world = (sr * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 3.0f))).Transpose();
-			a->modelConstantCPU.invTranspose = sr.Invert();
-		} 
+		Vector3 pickPoint; 
+		Quaternion q; 
+		Vector3 dragTranslation;
+		if (MousePicking(m_objectBS, q, dragTranslation, pickPoint)) {  
+			Matrix& world = m_objectList[0]->modelConstantCPU.world; 
+			world = world.Transpose();
+			Vector3 translation = world.Translation();
+			world.Translation(Vector3(0.0f)); 
+			world = world * Matrix::CreateFromQuaternion(q) * Matrix::CreateTranslation(dragTranslation + translation); 
+			world = world.Transpose();
+			m_objectBS.Center = dragTranslation + translation; 
+
+			m_cursorSphere->modelConstantCPU.world =  Matrix::CreateTranslation(pickPoint).Transpose(); 
+			m_cursorSphere->isVisible = true; 
+		}
+		else {
+			m_cursorSphere->isVisible = false; 
+		}
 
 		for (auto& a : m_objectList) {
 			a->UpdateConstantBuffer(m_context);
-		} 
+		}
 
 		postProcess.samplingFilter.UpdateConstantBuffer(m_context);
 		postProcess.combineFilter.UpdateConstantBuffer(m_context);
@@ -89,6 +127,10 @@ namespace Engine {
 		float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		m_context->ClearRenderTargetView(postProcessRTV.Get(), color);  
 		m_context->ClearDepthStencilView(m_DSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0.0f);
+		
+		SetGraphicsPSO(PSO::billboardPSO); 
+		
+		billboards.Render(m_context); 
 
 		SetGraphicsPSO(useWire ? PSO::cubeMapWirePSO : PSO::cubeMapSolidPSO); 
 		

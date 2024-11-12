@@ -27,11 +27,16 @@ namespace Engine
 		ComPtr<ID3D11PixelShader> samplingPS;
 		ComPtr<ID3D11PixelShader> bloomDownPS;
 		ComPtr<ID3D11PixelShader> bloomUpPS;
-		ComPtr<ID3D11PixelShader> combinePS;
+		ComPtr<ID3D11PixelShader> combinePS; 
+
+		ComPtr<ID3D11VertexShader> billboardVS; 
+		ComPtr<ID3D11GeometryShader> billboardGS; 
+		ComPtr<ID3D11PixelShader> billboardPS; 
 
 
 
 		ComPtr<ID3D11InputLayout> basicIL;
+		ComPtr<ID3D11InputLayout> billboardIL;
 
 
 
@@ -48,7 +53,8 @@ namespace Engine
 		GraphicsPSO wireNoneCullPSO;
 		GraphicsPSO cubeMapSolidPSO;
 		GraphicsPSO cubeMapWirePSO;
-		GraphicsPSO postProcessPSO;
+		GraphicsPSO postProcessPSO; 
+		GraphicsPSO billboardPSO; 
 	}
 
 	void PSO::InitGraphicsPSO(ComPtr<ID3D11Device>& device) {
@@ -84,6 +90,13 @@ namespace Engine
 		postProcessPSO.vertexShader = samplingVS;
 		postProcessPSO.pixelShader = samplingPS;
 		postProcessPSO.rasterizerState = postProcessRS; 
+
+		billboardPSO = defaultSolidPSO; 
+		billboardPSO.vertexShader = billboardVS;
+		billboardPSO.geometryShader = billboardGS;
+		billboardPSO.pixelShader = billboardPS; 
+		billboardPSO.inputLayout = billboardIL; 
+		billboardPSO.primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST; 
 	}
 
 	void PSO::InitShader(ComPtr<ID3D11Device>& device) {
@@ -91,7 +104,11 @@ namespace Engine
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		};
+		}; 
+
+		std::vector<D3D11_INPUT_ELEMENT_DESC> billboardIEs{
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		}; 
 
 		D3D11Utils::CreateVertexShaderAndInputLayout(device, L"BasicVS.hlsl", basicIEs, basicVS, basicIL);
 		D3D11Utils::CreatePixelShader(device, L"BasicPS.hlsl", basicPS); 
@@ -108,6 +125,10 @@ namespace Engine
 		D3D11Utils::CreatePixelShader(device, L"BloomDownPS.hlsl", bloomDownPS);
 		D3D11Utils::CreatePixelShader(device, L"BloomUpPS.hlsl", bloomUpPS);
 		D3D11Utils::CreatePixelShader(device, L"CombinePS.hlsl", combinePS); 
+
+		D3D11Utils::CreateVertexShaderAndInputLayout(device, L"BillboardVS.hlsl", billboardIEs, billboardVS, billboardIL);
+		D3D11Utils::CreateGeometryShader(device, L"BillboardGS.hlsl", billboardGS); 
+		D3D11Utils::CreatePixelShader(device, L"BillboardPS.hlsl", billboardPS); 
 	}
 
 	void PSO::InitRasterizerState(ComPtr<ID3D11Device>& device) {

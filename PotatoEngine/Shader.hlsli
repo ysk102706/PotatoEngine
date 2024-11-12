@@ -57,14 +57,14 @@ cbuffer globalConstantData : register(b1)
 cbuffer PostProcessConstantData : register(b2)
 {
     float2 pixelDelta;
-    float bloomStrength;
-    float threshold;
+    float bloomStrength; 
+    float threshold; 
 };
 
 struct VSInput
 {
     float3 pos : POSITION;
-    float3 normal : NORMAL;
+    float3 normal : NORMAL; 
     float2 texcoord : TEXCOORD;
 };
 

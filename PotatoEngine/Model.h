@@ -41,10 +41,12 @@ namespace Engine
 		Matrix invTranspose; 
 	}; 
 
-	struct MaterialConstantData {
+	struct MaterialConstantData { 
 		PhongShading mat; 
 		RimEffect rim;
-		FresnelEffect fresnel;
+		FresnelEffect fresnel; 
+		bool useAmbient;
+		Vector3 dummy; 
 	};
 
 	class Model {
@@ -60,7 +62,9 @@ namespace Engine
 		void UpdateConstantBuffer(ComPtr<ID3D11DeviceContext>& context);
 
 		ModelConstantData modelConstantCPU;
-		MaterialConstantData materialConstantCPU;
+		MaterialConstantData materialConstantCPU; 
+
+		bool isVisible;
 
 	private:
 		std::vector<std::shared_ptr<Mesh>> meshes; 

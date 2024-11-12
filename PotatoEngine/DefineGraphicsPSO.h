@@ -35,9 +35,14 @@ namespace Engine
 		extern ComPtr<ID3D11PixelShader> bloomUpPS; 
 		extern ComPtr<ID3D11PixelShader> combinePS; 
 
+		extern ComPtr<ID3D11VertexShader> billboardVS;
+		extern ComPtr<ID3D11GeometryShader> billboardGS; 
+		extern ComPtr<ID3D11PixelShader> billboardPS;
 
 
-		extern ComPtr<ID3D11InputLayout> basicIL;
+
+		extern ComPtr<ID3D11InputLayout> basicIL; 
+		extern ComPtr<ID3D11InputLayout> billboardIL; 
 
 
 
@@ -55,6 +60,7 @@ namespace Engine
 		extern GraphicsPSO cubeMapSolidPSO;
 		extern GraphicsPSO cubeMapWirePSO; 
 		extern GraphicsPSO postProcessPSO; 
+		extern GraphicsPSO billboardPSO; 
 		
 		void InitGraphicsPSO(ComPtr<ID3D11Device>& device);
 

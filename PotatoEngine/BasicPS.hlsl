@@ -10,10 +10,17 @@ cbuffer MaterialConstantData : register(b0)
     PhongShading mat;
     RimEffect rim; 
     FresnelEffect fresnel; 
+    bool useAmbient;
+    float3 dummy; 
 }; 
 
 float4 main(PSInput input) : SV_TARGET
-{
+{ 
+    if (useAmbient)
+    {
+        return float4(mat.ambient, 1.0); 
+    }
+    
     float3 toEye = normalize(eyePos - input.posWorld);
     float3 toLight = normalize(light.pos - input.posWorld); 
     float3 halfway = normalize(toEye + toLight);
@@ -40,7 +47,7 @@ float4 main(PSInput input) : SV_TARGET
     
     diffuse *= Tex.Sample(linearWarpSS, input.texcoord); 
     
-    return diffuse + specular;
+    return diffuse + specular; 
     
     //return Tex.Sample(linearWarpSS, input.texcoord); 
     //return float4(color, 1.0); 
