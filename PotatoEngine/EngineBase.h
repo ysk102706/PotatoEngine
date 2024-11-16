@@ -13,6 +13,7 @@
 #include "Camera.h" 
 #include "Model.h" 
 #include "Billboard.h" 
+#include "TessellationQuad.h"
 
 namespace Engine { 
 	using Microsoft::WRL::ComPtr; 
@@ -104,6 +105,7 @@ namespace Engine {
 		std::shared_ptr<Model> m_cursorSphere; 
 
 		Billboard billboards; 
+		TessellationQuad tessellationQuad;
 
 	};
 }

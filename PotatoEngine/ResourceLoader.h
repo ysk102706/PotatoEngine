@@ -14,4 +14,4 @@ namespace Engine
 		static std::vector<MeshData> LoadModel(std::string path, std::string filename, bool revertNormal);
 		static void CreateDDSTexture(ComPtr<ID3D11Device>& device, const wchar_t* filepath, bool isCubeMap, ComPtr<ID3D11ShaderResourceView>& srv);
 	};
-}
+} 

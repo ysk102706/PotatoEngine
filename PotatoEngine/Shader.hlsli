@@ -66,6 +66,11 @@ struct VSInput
     float3 pos : POSITION;
     float3 normal : NORMAL; 
     float2 texcoord : TEXCOORD;
+}; 
+
+struct Pos4VSInput
+{
+    float4 pos : POSITION; 
 };
 
 struct PSInput

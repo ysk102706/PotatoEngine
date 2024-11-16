@@ -19,13 +19,16 @@ namespace Engine {
 	{
 		if (!EngineBase::Initialize()) return false; 
 
-		std::vector<Vector4> billboardPoints; 
-		Vector4 p = Vector4(-20.0f, 1.0f, 20.0f, 1.0f);
-		for (int i = 0; i < 20; i++) {
-			billboardPoints.push_back(p);
-			p.x += 2.0f; 
-		}
-		billboards.Initialize(m_device, m_context, billboardPoints, 1.8f);
+		//std::vector<Vector4> billboardPoints; 
+		//Vector4 p = Vector4(-20.0f, 1.0f, 20.0f, 1.0f);
+		//for (int i = 0; i < 20; i++) {
+		//	billboardPoints.push_back(p);
+		//	p.x += 2.0f; 
+		//}
+		//billboards.Initialize(m_device, m_context, billboardPoints, 1.8f);
+
+		auto tq = DefaultObjectGenerator::MakeTessellationQuad();
+		tessellationQuad.Initialize(m_device, m_context, tq); 
 
 		CreateCubeMap(L"../Resources/Texture/CubeMap/", L"SampleEnvMDR.dds", L"SampleDiffuseMDR.dds", L"SampleSpecularMDR.dds");
 		
@@ -45,6 +48,7 @@ namespace Engine {
 			meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
 			auto model = std::make_shared<Model>(m_device, m_context, std::vector{ meshData }); 
 			//auto model = std::make_shared<Model>(m_device, m_context, meshData); 
+			model->isVisible = false; 
 			model->modelConstantCPU.world = Matrix::CreateTranslation(pos).Transpose(); 
 			model->UpdateConstantBuffer(m_context); 
 
@@ -109,7 +113,7 @@ namespace Engine {
 		postProcess.combineFilter.UpdateConstantBuffer(m_context);
 	}
 
-	void MainEngine::Render()
+	void MainEngine::Render() 
 	{
 		SetDefaultViewport(); 
 
@@ -128,13 +132,17 @@ namespace Engine {
 		m_context->ClearRenderTargetView(postProcessRTV.Get(), color);  
 		m_context->ClearDepthStencilView(m_DSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0.0f);
 		
-		SetGraphicsPSO(PSO::billboardPSO); 
+		//SetGraphicsPSO(PSO::billboardPSO); 
 		
-		billboards.Render(m_context); 
+		//billboards.Render(m_context); 
+
+		SetGraphicsPSO(useWire ? PSO::tessellationQuadWirePSO : PSO::tessellationQuadSolidPSO); 
+
+		tessellationQuad.Render(m_context); 
 
 		SetGraphicsPSO(useWire ? PSO::cubeMapWirePSO : PSO::cubeMapSolidPSO); 
 		
-		m_envMap->Render(m_context);
+		m_envMap->Render(m_context); 
 
 		if (useBackFaceCull) SetGraphicsPSO(useWire ? PSO::defaultWirePSO : PSO::defaultSolidPSO); 
 		else SetGraphicsPSO(useWire ? PSO::wireNoneCullPSO : PSO::solidNoneCullPSO); 
@@ -143,15 +151,15 @@ namespace Engine {
 			a->Render(m_context);
 		}
 
-		if (useNormal) {
-			SetGraphicsPSO(PSO::normalPSO);
+		if (useNormal) { 
+			SetGraphicsPSO(PSO::normalPSO); 
 
 			for (auto& a : m_objectList) {
 				a->NormalRender(m_context);
 			}
 		} 
 
-		SetGraphicsPSO(PSO::postProcessPSO);
+		SetGraphicsPSO(PSO::postProcessPSO); 
 		postProcess.Render(m_context); 
 	}
 

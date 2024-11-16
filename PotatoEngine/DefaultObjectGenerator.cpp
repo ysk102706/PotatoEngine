@@ -357,4 +357,16 @@ namespace Engine {
         return meshes;
     }
 
+    std::vector<Vector4> DefaultObjectGenerator::MakeTessellationQuad()
+    {
+        std::vector<Vector4> vertices; 
+
+        vertices.push_back(Vector4(-1.0f, 1.0f, 1.0f, 1.0f));
+        vertices.push_back(Vector4(1.0f, 1.0f, 1.0f, 1.0f)); 
+        vertices.push_back(Vector4(-1.0f, -1.0f, 1.0f, 1.0f)); 
+        vertices.push_back(Vector4(1.0f, -1.0f, 1.0f, 1.0f));
+
+        return vertices;
+    }
+
 }

@@ -294,6 +294,8 @@ namespace Engine {
 	void EngineBase::SetGraphicsPSO(const GraphicsPSO& pso)
 	{
 		m_context->VSSetShader(pso.vertexShader.Get(), 0, 0); 
+		m_context->HSSetShader(pso.hullShader.Get(), 0, 0); 
+		m_context->DSSetShader(pso.domainShader.Get(), 0, 0); 
 		m_context->GSSetShader(pso.geometryShader.Get(), 0, 0);
 		m_context->PSSetShader(pso.pixelShader.Get(), 0, 0);
 		m_context->RSSetState(pso.rasterizerState.Get()); 
@@ -304,7 +306,9 @@ namespace Engine {
 	void EngineBase::SetGlobalConstant()
 	{
 		m_context->VSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf());
-		m_context->GSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf());
+		m_context->HSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf());
+		m_context->DSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf()); 
+		m_context->GSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf()); 
 		m_context->PSSetConstantBuffers(1, 1, globalConstantGPU.GetAddressOf());
 	}
 

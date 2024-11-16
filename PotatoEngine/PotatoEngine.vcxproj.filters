@@ -57,6 +57,9 @@
     <ClCompile Include="Billboard.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="TessellationQuad.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineBase.h">
@@ -86,12 +89,6 @@
     <ClInclude Include="GraphicsPSO.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
-    <ClInclude Include="DefineGraphicsPSO.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceLoader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="PostProcess.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
@@ -102,6 +99,15 @@
       <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="Billboard.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DefineGraphicsPSO.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceLoader.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TessellationQuad.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -149,6 +155,18 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="BillboardPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="TessellationQuadVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="TessellationQuadDS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="TessellationQuadHS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="TessellationQuadPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

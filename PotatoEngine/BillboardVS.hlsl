@@ -1,14 +1,11 @@
-struct BillboardVSInput
-{ 
-    float4 pos : POSITION; 
-}; 
+#include "Shader.hlsli"
 
 struct BillboardGSInput
 {
     float4 pos : SV_POSITION;
 };
 
-BillboardGSInput main(BillboardVSInput input)
+BillboardGSInput main(Pos4VSInput input)
 {
     BillboardGSInput output; 
     output.pos = input.pos; 

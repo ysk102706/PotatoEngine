@@ -33,10 +33,14 @@ namespace Engine
 		ComPtr<ID3D11GeometryShader> billboardGS; 
 		ComPtr<ID3D11PixelShader> billboardPS; 
 
+		ComPtr<ID3D11VertexShader> tessellationQuadVS;
+		ComPtr<ID3D11HullShader> tessellationQuadHS;
+		ComPtr<ID3D11DomainShader> tessellationQuadDS;
+		ComPtr<ID3D11PixelShader> tessellationQuadPS;
 
 
 		ComPtr<ID3D11InputLayout> basicIL;
-		ComPtr<ID3D11InputLayout> billboardIL;
+		ComPtr<ID3D11InputLayout> pos4IL;
 
 
 
@@ -54,7 +58,9 @@ namespace Engine
 		GraphicsPSO cubeMapSolidPSO;
 		GraphicsPSO cubeMapWirePSO;
 		GraphicsPSO postProcessPSO; 
-		GraphicsPSO billboardPSO; 
+		GraphicsPSO billboardPSO;
+		GraphicsPSO tessellationQuadSolidPSO;
+		GraphicsPSO tessellationQuadWirePSO;
 	}
 
 	void PSO::InitGraphicsPSO(ComPtr<ID3D11Device>& device) {
@@ -83,8 +89,11 @@ namespace Engine
 		wireNoneCullPSO.rasterizerState = wireNoneCullRS; 
 
 		cubeMapSolidPSO = defaultSolidPSO;
-		cubeMapSolidPSO.vertexShader = cubeMapVS;
+		cubeMapSolidPSO.vertexShader = cubeMapVS; 
 		cubeMapSolidPSO.pixelShader = cubeMapPS; 
+
+		cubeMapWirePSO = cubeMapSolidPSO; 
+		cubeMapWirePSO.rasterizerState = wireRS; 
 
 		postProcessPSO = defaultSolidPSO;
 		postProcessPSO.vertexShader = samplingVS;
@@ -95,18 +104,29 @@ namespace Engine
 		billboardPSO.vertexShader = billboardVS;
 		billboardPSO.geometryShader = billboardGS;
 		billboardPSO.pixelShader = billboardPS; 
-		billboardPSO.inputLayout = billboardIL; 
+		billboardPSO.inputLayout = pos4IL; 
 		billboardPSO.primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST; 
+
+		tessellationQuadSolidPSO = defaultSolidPSO; 
+		tessellationQuadSolidPSO.vertexShader = tessellationQuadVS;
+		tessellationQuadSolidPSO.hullShader = tessellationQuadHS; 
+		tessellationQuadSolidPSO.domainShader = tessellationQuadDS; 
+		tessellationQuadSolidPSO.pixelShader = tessellationQuadPS; 
+		tessellationQuadSolidPSO.inputLayout = pos4IL; 
+		tessellationQuadSolidPSO.primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST; 
+
+		tessellationQuadWirePSO = tessellationQuadSolidPSO; 
+		tessellationQuadWirePSO.rasterizerState = wireRS; 
 	}
 
 	void PSO::InitShader(ComPtr<ID3D11Device>& device) {
 		std::vector<D3D11_INPUT_ELEMENT_DESC> basicIEs{
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}, 
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		}; 
 
-		std::vector<D3D11_INPUT_ELEMENT_DESC> billboardIEs{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> pos4IEs{
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
 		}; 
 
@@ -126,16 +146,21 @@ namespace Engine
 		D3D11Utils::CreatePixelShader(device, L"BloomUpPS.hlsl", bloomUpPS);
 		D3D11Utils::CreatePixelShader(device, L"CombinePS.hlsl", combinePS); 
 
-		D3D11Utils::CreateVertexShaderAndInputLayout(device, L"BillboardVS.hlsl", billboardIEs, billboardVS, billboardIL);
+		D3D11Utils::CreateVertexShaderAndInputLayout(device, L"BillboardVS.hlsl", pos4IEs, billboardVS, pos4IL);
 		D3D11Utils::CreateGeometryShader(device, L"BillboardGS.hlsl", billboardGS); 
 		D3D11Utils::CreatePixelShader(device, L"BillboardPS.hlsl", billboardPS); 
+
+		D3D11Utils::CreateVertexShaderAndInputLayout(device, L"TessellationQuadVS.hlsl", pos4IEs, tessellationQuadVS, pos4IL); 
+		D3D11Utils::CreateHullShader(device, L"TessellationQuadHS.hlsl", tessellationQuadHS);
+		D3D11Utils::CreateDomainShader(device, L"TessellationQuadDS.hlsl", tessellationQuadDS);
+		D3D11Utils::CreatePixelShader(device, L"TessellationQuadPS.hlsl", tessellationQuadPS); 
 	}
 
 	void PSO::InitRasterizerState(ComPtr<ID3D11Device>& device) {
 		D3D11_RASTERIZER_DESC rd;
 		ZeroMemory(&rd, sizeof(rd));
 		rd.FillMode = D3D11_FILL_SOLID;
-		rd.CullMode = D3D11_CULL_BACK;
+		rd.CullMode = D3D11_CULL_BACK; 
 		rd.FrontCounterClockwise = false;
 		rd.DepthClipEnable = true;
 		rd.MultisampleEnable = true;
@@ -178,7 +203,7 @@ namespace Engine
 		samplerStates.push_back(linearWarpSS.Get());
 
 		sd.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-		sd.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sd.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP; 
 		sd.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 
 		device->CreateSamplerState(&sd, linearClampSS.GetAddressOf());

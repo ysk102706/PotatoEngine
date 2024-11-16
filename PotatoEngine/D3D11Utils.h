@@ -13,6 +13,8 @@ namespace Engine
 		static void CreateVertexShaderAndInputLayout(ComPtr<ID3D11Device> &device, const std::wstring &filename, 
 													 const std::vector<D3D11_INPUT_ELEMENT_DESC> &inputElement, 
 													 ComPtr<ID3D11VertexShader> &vertexShader, ComPtr<ID3D11InputLayout> &inputLayout);
+		static void CreateHullShader(ComPtr<ID3D11Device>& device, const std::wstring& filename, ComPtr<ID3D11HullShader>& hullShader); 
+		static void CreateDomainShader(ComPtr<ID3D11Device>& device, const std::wstring& filename, ComPtr<ID3D11DomainShader>& domainShader); 
 		static void CreateGeometryShader(ComPtr<ID3D11Device>& device, const std::wstring& filename, ComPtr<ID3D11GeometryShader>& geometryShader); 
 		static void CreatePixelShader(ComPtr<ID3D11Device>& device, const std::wstring& filename, ComPtr<ID3D11PixelShader>& pixelShader); 
 
