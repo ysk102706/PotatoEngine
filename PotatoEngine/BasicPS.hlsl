@@ -12,7 +12,8 @@ cbuffer MaterialConstantData : register(b0)
     FresnelEffect fresnel; 
     bool useAmbient;
     float mipLevel; 
-    float2 dummy; 
+    bool useTextureLOD; 
+    float dummy; 
 }; 
 
 float4 main(PSInput input) : SV_TARGET
@@ -46,7 +47,14 @@ float4 main(PSInput input) : SV_TARGET
         specular.xyz *= SchlickFresnel_UnrealEngine4(fresnel.fresnelR0, VdotH);
     }
     
-    diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, mipLevel); 
+    if (useTextureLOD) 
+    {
+        diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, 10 * saturate((length(eyePos - input.posWorld) - 3) / 10.0));
+    }
+    else 
+    {
+        diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, mipLevel); 
+    } 
     
     return diffuse + specular; 
     

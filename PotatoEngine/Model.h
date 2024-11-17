@@ -47,7 +47,9 @@ namespace Engine
 		FresnelEffect fresnel; 
 		bool useAmbient; 
 		float mipLevel; 
-		Vector2 dummy; 
+		bool useTextureLOD; 
+		float dummy; 
+		//Vector2 dummy; 
 	};
 
 	class Model {

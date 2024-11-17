@@ -215,6 +215,7 @@ namespace Engine {
 		} 
 
 		if (ImGui::TreeNode("Texture")) {
+			ImGui::Checkbox("useTextureLOD", &m_objectList[0]->materialConstantCPU.useTextureLOD); 
 			ImGui::SliderFloat("mipLevel", &m_objectList[0]->materialConstantCPU.mipLevel, 0.0f, 10.0f); 
 
 			ImGui::TreePop(); 
