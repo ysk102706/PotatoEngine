@@ -48,7 +48,7 @@ namespace Engine {
 			meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
 			auto model = std::make_shared<Model>(m_device, m_context, std::vector{ meshData }); 
 			//auto model = std::make_shared<Model>(m_device, m_context, meshData); 
-			model->isVisible = false; 
+			//model->isVisible = false; 
 			model->modelConstantCPU.world = Matrix::CreateTranslation(pos).Transpose(); 
 			model->UpdateConstantBuffer(m_context); 
 
@@ -136,9 +136,9 @@ namespace Engine {
 		
 		//billboards.Render(m_context); 
 
-		SetGraphicsPSO(useWire ? PSO::tessellationQuadWirePSO : PSO::tessellationQuadSolidPSO); 
+		//SetGraphicsPSO(useWire ? PSO::tessellationQuadWirePSO : PSO::tessellationQuadSolidPSO); 
 
-		tessellationQuad.Render(m_context); 
+		//tessellationQuad.Render(m_context); 
 
 		SetGraphicsPSO(useWire ? PSO::cubeMapWirePSO : PSO::cubeMapSolidPSO); 
 		
@@ -212,6 +212,12 @@ namespace Engine {
 			ImGui::SliderFloat("strength", &postProcess.combineFilter.imageFilterConstantCPU.bloomStrength, 0.0, 1.0);
 
 			ImGui::TreePop();
+		} 
+
+		if (ImGui::TreeNode("Texture")) {
+			ImGui::SliderFloat("mipLevel", &m_objectList[0]->materialConstantCPU.mipLevel, 0.0f, 10.0f); 
+
+			ImGui::TreePop(); 
 		}
 	}
 }

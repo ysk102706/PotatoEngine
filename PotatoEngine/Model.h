@@ -45,8 +45,9 @@ namespace Engine
 		PhongShading mat; 
 		RimEffect rim;
 		FresnelEffect fresnel; 
-		bool useAmbient;
-		Vector3 dummy; 
+		bool useAmbient; 
+		float mipLevel; 
+		Vector2 dummy; 
 	};
 
 	class Model {

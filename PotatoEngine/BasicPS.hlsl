@@ -11,7 +11,8 @@ cbuffer MaterialConstantData : register(b0)
     RimEffect rim; 
     FresnelEffect fresnel; 
     bool useAmbient;
-    float3 dummy; 
+    float mipLevel; 
+    float2 dummy; 
 }; 
 
 float4 main(PSInput input) : SV_TARGET
@@ -45,7 +46,7 @@ float4 main(PSInput input) : SV_TARGET
         specular.xyz *= SchlickFresnel_UnrealEngine4(fresnel.fresnelR0, VdotH);
     }
     
-    diffuse *= Tex.Sample(linearWarpSS, input.texcoord); 
+    diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, mipLevel); 
     
     return diffuse + specular; 
     

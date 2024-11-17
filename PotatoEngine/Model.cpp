@@ -36,7 +36,7 @@ void Engine::Model::Initialize(ComPtr<ID3D11Device>& device, ComPtr<ID3D11Device
 		D3D11Utils::CreateIndexBuffer(device, a.indices, newMesh->indexBuffer); 
 
 		if (!a.albedoTextureFile.empty()) {
-			ResourceLoader::CreateTexture(device, context, a.albedoTextureFile, newMesh->albedoTexture, newMesh->albedoSRV);
+			ResourceLoader::CreateMipMapTexture(device, context, a.albedoTextureFile, newMesh->albedoTexture, newMesh->albedoSRV);
 		}
 
 		newMesh->vertexConstantBuffer = modelConstantGPU; 

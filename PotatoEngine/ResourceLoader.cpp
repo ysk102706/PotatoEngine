@@ -70,8 +70,65 @@ namespace Engine {
 
 		device->CreateTexture2D(&td, &sd, tex.GetAddressOf()); 
 		device->CreateShaderResourceView(tex.Get(), 0, srv.GetAddressOf()); 
+	}
 
-		//context->GenerateMips(srv.Get()); 
+	void ResourceLoader::CreateMipMapTexture(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context, const std::string filename, ComPtr<ID3D11Texture2D>& tex, ComPtr<ID3D11ShaderResourceView>& srv)
+	{
+		int width, height, channels;
+		std::vector<uint8_t> image;
+
+		ReadImage(filename, width, height, channels, image); 
+
+		ComPtr<ID3D11Texture2D> stagingTexture = CreateStagingTexture(device, context, width, height, image); 
+
+		D3D11_TEXTURE2D_DESC td;
+		ZeroMemory(&td, sizeof(td));
+		td.Width = width;
+		td.Height = height;
+		td.MipLevels = 0;
+		td.ArraySize = 1;
+		td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		td.SampleDesc.Count = 1;
+		td.Usage = D3D11_USAGE_DEFAULT; 
+		td.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+		td.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+		td.CPUAccessFlags = 0;
+
+		device->CreateTexture2D(&td, 0, tex.GetAddressOf()); 
+		
+		context->CopySubresourceRegion(tex.Get(), 0, 0, 0, 0, stagingTexture.Get(), 0, 0); 
+
+		device->CreateShaderResourceView(tex.Get(), 0, srv.GetAddressOf()); 
+
+		context->GenerateMips(srv.Get());
+	}
+
+	ComPtr<ID3D11Texture2D> ResourceLoader::CreateStagingTexture(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context, int width, int height, std::vector<uint8_t>& image)
+	{
+		ComPtr<ID3D11Texture2D> stagingTexture;
+
+		D3D11_TEXTURE2D_DESC td;
+		ZeroMemory(&td, sizeof(td));
+		td.Width = width;
+		td.Height = height;
+		td.MipLevels = 1;
+		td.ArraySize = 1;
+		td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		td.SampleDesc.Count = 1;
+		td.Usage = D3D11_USAGE_STAGING;
+		td.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+
+		device->CreateTexture2D(&td, 0, stagingTexture.GetAddressOf());
+
+		D3D11_MAPPED_SUBRESOURCE ms;
+		context->Map(stagingTexture.Get(), 0, D3D11_MAP_WRITE, 0, &ms); 
+		uint8_t* pData = (uint8_t*)ms.pData; 
+		for (int i = 0; i < height; i++) {
+			memcpy(&pData[i * ms.RowPitch], &image[i * width * 4], width * sizeof(uint8_t) * 4);
+		}
+		context->Unmap(stagingTexture.Get(), 0); 
+
+		return stagingTexture; 
 	}
 
 	std::string GetExtension(const std::string filename)
