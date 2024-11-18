@@ -10,6 +10,7 @@ namespace Engine {
 	struct Vertex {
 		Vector3 position;
 		Vector3 normal;
-		Vector2 texcoord;
+		Vector2 texcoord; 
+		Vector3 tangent;
 	};
 }

@@ -29,6 +29,9 @@ namespace Engine {
             Vertex v;
 
             v.position = pos[i];
+            v.normal = normal[i]; 
+            v.texcoord = tex[i]; 
+            v.tangent = Vector3(1.0f, 0.0f, 0.0f); 
 
             meshData.vertices.push_back(v);
         }
@@ -54,6 +57,7 @@ namespace Engine {
                 v.position = Vector3(-1 + j * dx, -1 + i * dy, 0.0f) * scale;
                 v.normal = Vector3(0.0f, 0.0f, -1.0f);
                 v.texcoord = Vector2(float(j) / column, 1 - float(i) / row); 
+                v.tangent = Vector3(1.0f, 0.0f, 0.0f); 
 
                 meshData.vertices.push_back(v);
             }

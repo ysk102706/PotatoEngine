@@ -23,17 +23,27 @@ namespace Engine
 	}; 
 
 	struct RimEffect {
-		bool useRim;
+		int useRim;
 		Vector3 color;
 		float strength;
 		float factor;
-		bool useSmoothStep;
+		int useSmoothStep;
 		float dummy;
 	}; 
 
 	struct FresnelEffect {
-		bool useFresnel; 
+		int useFresnel; 
 		Vector3 fresnelR0;
+	}; 
+
+	struct TextureSetting
+	{
+		int useAmbient;
+		int useTextureLOD; 
+		float mipLevel;
+		int useNormalMap;
+		int invertNormalMapY;
+		Vector3 dummy;
 	};
 
 	struct ModelConstantData {
@@ -45,11 +55,7 @@ namespace Engine
 		PhongShading mat; 
 		RimEffect rim;
 		FresnelEffect fresnel; 
-		bool useAmbient; 
-		float mipLevel; 
-		bool useTextureLOD; 
-		float dummy; 
-		//Vector2 dummy; 
+		TextureSetting texture; 
 	};
 
 	class Model {

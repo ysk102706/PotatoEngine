@@ -31,18 +31,28 @@ struct Light
 
 struct RimEffect
 {
-    bool useRim;
+    int useRim;
     float3 color;
     float strength;
     float factor;
-    bool useSmoothStep;
+    int useSmoothStep;
     float dummy;
 };
 
 struct FresnelEffect
-{
-    bool useFresnel; 
+{ 
+    int useFresnel; 
     float3 fresnelR0;
+}; 
+
+struct TextureSetting
+{
+    int useAmbient;
+    int useTextureLOD; 
+    float mipLevel; 
+    int useNormalMap; 
+    int invertNormalMapY; 
+    float3 dummy; 
 };
 
 cbuffer globalConstantData : register(b1)
@@ -65,7 +75,8 @@ struct VSInput
 {
     float3 pos : POSITION;
     float3 normal : NORMAL; 
-    float2 texcoord : TEXCOORD;
+    float2 texcoord : TEXCOORD; 
+    float3 tangent : TANGENT; 
 }; 
 
 struct Pos4VSInput
@@ -78,5 +89,6 @@ struct PSInput
     float4 pos : SV_POSITION; 
     float3 posWorld : POSITION0;
     float3 normalWorld : POSITION1;
-    float2 texcoord : TEXCOORD;
+    float2 texcoord : TEXCOORD; 
+    float3 tangent : TANGENT; 
 };

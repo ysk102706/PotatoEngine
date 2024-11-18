@@ -20,7 +20,8 @@ PSInput main(VSInput input)
     output.normalWorld = mul(float4(input.normal, 0.0), invTranspose).xyz; 
     normalize(output.normalWorld);
     
-    output.texcoord = input.texcoord;
+    output.texcoord = input.texcoord; 
+    output.tangent = input.tangent; 
     
     return output;
 }

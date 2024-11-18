@@ -36,7 +36,7 @@ namespace Engine {
 
 		if (channels <= 4) {
 			for (int i = 0; i < width * height; i++) {
-				for (int j = 0; j < 4; j++) image[i * 4 + j] = j < channels ? img[i * 4 + j] : 255;
+				for (int j = 0; j < 4; j++) image[i * 4 + j] = j < channels ? img[i * channels + j] : 255;
 			}
 		}
 		else std::cout << "Can not read " << channels << " channels\n";
@@ -223,6 +223,65 @@ namespace Engine {
 		for (UINT i = 0; i < node->mNumChildren; i++) {
 			ProcessNode(node->mChildren[i], scene, m);
 		}
+	} 
+
+	void UpdateNormal() 
+	{ 
+		std::vector<Vector3> normalSum(ModelLoad::meshes.size(), Vector3(0.0f));
+		std::vector<int> normalCount(ModelLoad::meshes.size(), 0);
+
+		for (auto& a : ModelLoad::meshes) { 
+			for (int i = 0; i < a.indices.size(); i += 3) { 
+				int i1 = a.indices[i];
+				int i2 = a.indices[i + 1];
+				int i3 = a.indices[i + 2]; 
+
+				Vertex v1 = a.vertices[i1];
+				Vertex v2 = a.vertices[i2];
+				Vertex v3 = a.vertices[i3]; 
+				
+				Vector3 faceNormal = (v2.normal - v1.normal).Cross(v3.normal - v1.normal); 
+
+				normalSum[i1] += faceNormal;
+				normalSum[i2] += faceNormal;
+				normalSum[i3] += faceNormal; 
+
+				normalCount[i1]++;
+				normalCount[i2]++;
+				normalCount[i3]++;
+			} 
+
+			for (int i = 0; i < a.vertices.size(); i++) { 
+				if (normalCount[i]) {
+					a.vertices[i].normal = normalSum[i] / normalCount[i]; 
+					a.vertices[i].normal.Normalize(); 
+				}
+			}
+		}
+	} 
+
+	void UpdateTangent()
+	{
+		for (auto& a : ModelLoad::meshes) {
+			std::vector<DirectX::XMFLOAT3> pos(a.vertices.size()); 
+			std::vector<DirectX::XMFLOAT3> normal(a.vertices.size()); 
+			std::vector<DirectX::XMFLOAT2> tex(a.vertices.size()); 
+			std::vector<DirectX::XMFLOAT3> tan(a.vertices.size()); 
+			std::vector<DirectX::XMFLOAT3> bitan(a.vertices.size()); 
+
+			for (int i = 0; i < a.vertices.size(); i++) {
+				auto& v = a.vertices[i]; 
+				pos[i] = v.position; 
+				normal[i] = v.normal; 
+				tex[i] = v.texcoord; 
+			} 
+
+			DirectX::ComputeTangentFrame(a.indices.data(), a.indices.size() / 3, pos.data(), normal.data(), tex.data(), a.vertices.size(), tan.data(), bitan.data()); 
+
+			for (int i = 0; i < a.vertices.size(); i++) {
+				a.vertices[i].tangent = tan[i]; 
+			}
+		}
 	}
 
 	std::vector<MeshData> ResourceLoader::LoadModel(std::string path, std::string filename, bool revertNormal)
@@ -238,7 +297,7 @@ namespace Engine {
 		
 		ModelLoad::path = path;
 
-		Assimp::Importer importer;
+		Assimp::Importer importer; 
 
 		const aiScene* scene = importer.ReadFile(
 			path + filename,
@@ -247,11 +306,14 @@ namespace Engine {
 
 		if (scene) {
 			Matrix tr; 
-			ProcessNode(scene->mRootNode, scene, tr);
+			ProcessNode(scene->mRootNode, scene, tr); 
+
+			UpdateNormal(); 
+			UpdateTangent(); 
 		}
 		else std::cout << "Failed to read file " << path + filename << '\n';
 
-		return ModelLoad::meshes;
+		return ModelLoad::meshes; 
 	} 
 
 	void ResourceLoader::CreateDDSTexture(ComPtr<ID3D11Device>& device, const wchar_t* filepath, bool isCubeMap, ComPtr<ID3D11ShaderResourceView>& srv)

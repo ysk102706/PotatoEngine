@@ -37,10 +37,14 @@ void Engine::Model::Initialize(ComPtr<ID3D11Device>& device, ComPtr<ID3D11Device
 
 		if (!a.albedoTextureFile.empty()) {
 			ResourceLoader::CreateMipMapTexture(device, context, a.albedoTextureFile, newMesh->albedoTexture, newMesh->albedoSRV);
+		} 
+
+		if (!a.normalMapTextureFile.empty()) {
+			ResourceLoader::CreateTexture(device, context, a.normalMapTextureFile, newMesh->normalMapTexture, newMesh->normalMapSRV); 
 		}
 
 		newMesh->vertexConstantBuffer = modelConstantGPU; 
-		newMesh->pixelConstantBuffer = materialConstantGPU;
+		newMesh->pixelConstantBuffer = materialConstantGPU; 
 
 		meshes.push_back(newMesh);
 	}
@@ -54,11 +58,11 @@ void Model::Render(ComPtr<ID3D11DeviceContext>& context)
 			context->PSSetConstantBuffers(0, 1, a->pixelConstantBuffer.GetAddressOf());
 
 			std::vector<ID3D11ShaderResourceView*> SRVs = {
-				a->albedoSRV.Get()
+				a->albedoSRV.Get(), a->normalMapSRV.Get() 
 			};
 			context->PSSetShaderResources(0, SRVs.size(), SRVs.data());
 
-			context->IASetVertexBuffers(0, 1, a->vertexBuffer.GetAddressOf(), &a->stride, &a->offset);
+			context->IASetVertexBuffers(0, 1, a->vertexBuffer.GetAddressOf(), &a->stride, &a->offset); 
 			context->IASetIndexBuffer(a->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 			context->DrawIndexed(a->indexCount, 0, 0);
 		}

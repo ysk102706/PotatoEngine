@@ -37,31 +37,33 @@ namespace Engine {
 		m_envMap = std::make_shared<Model>(m_device, m_context, std::vector{ envMapMeshData }); 
 
 		{
-			Vector3 pos = Vector3(0.0f, 0.0f, 3.0f);
-			//auto meshData = DefaultObjectGenerator::MakeSquareGrid(1.0f, 3, 2); 
+			Vector3 pos = Vector3(0.0f, 0.0f, 1.0f);
+			auto meshData = DefaultObjectGenerator::MakeSquareGrid(1.0f, 3, 2); 
 			//auto meshData = DefaultObjectGenerator::MakeBox(1.0f);
 			//auto meshData = DefaultObjectGenerator::MakeCylinder(1.0f, 1.5f, 2.0f, 20, 5); 
-			auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 50, 50);
+			//auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 50, 50);
 			//auto meshData = DefaultObjectGenerator::ReadFromFile("../Resources/3D_Model/", "stanford_dragon.stl", false);
-			meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
-			meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
-			meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
+			//meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
+			//meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
+			//meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
+			meshData.albedoTextureFile = "../Resources/Texture/Bricks075A_1K-PNG/Bricks075A_1K_Color.png"; 
+			meshData.normalMapTextureFile = "../Resources/Texture/Bricks075A_1K-PNG/Bricks075A_1K_NormalDX.png"; 
 			auto model = std::make_shared<Model>(m_device, m_context, std::vector{ meshData }); 
 			//auto model = std::make_shared<Model>(m_device, m_context, meshData); 
 			//model->isVisible = false; 
 			model->modelConstantCPU.world = Matrix::CreateTranslation(pos).Transpose(); 
 			model->UpdateConstantBuffer(m_context); 
 
-			m_objectList.push_back(model);
+			m_objectList.push_back(model); 
 
-			m_objectBS = DirectX::BoundingSphere(pos, 1.5f); 
+			//m_objectBS = DirectX::BoundingSphere(pos, 1.5f); 
 		}
 
 		{
 			auto meshData = DefaultObjectGenerator::MakeSphere(0.03f, 10, 10); 
 			m_cursorSphere = std::make_shared<Model>(m_device, m_context, std::vector{ meshData }); 
 			m_cursorSphere->isVisible = false; 
-			m_cursorSphere->materialConstantCPU.useAmbient = true;
+			m_cursorSphere->materialConstantCPU.texture.useAmbient = true;
 			m_cursorSphere->materialConstantCPU.mat.ambient = Vector3(1.0f, 1.0f, 0.0f); 
 			m_cursorSphere->UpdateConstantBuffer(m_context); 
 
@@ -191,17 +193,17 @@ namespace Engine {
 		m_objectList[0]->materialConstantCPU.mat.specular = Vector3(GUI::specular);
 
 		if (ImGui::TreeNode("Rim")) {
-			ImGui::Checkbox("useRim", &m_objectList[0]->materialConstantCPU.rim.useRim);
+			ImGui::CheckboxFlags("useRim", &m_objectList[0]->materialConstantCPU.rim.useRim, 1);
 			ImGui::SliderFloat3("color", &m_objectList[0]->materialConstantCPU.rim.color.x, 0.0f, 1.0f);
 			ImGui::SliderFloat("strength", &m_objectList[0]->materialConstantCPU.rim.strength, 0.0f, 10.0f);
 			ImGui::SliderFloat("factor", &m_objectList[0]->materialConstantCPU.rim.factor, 0.0f, 10.0f);
-			ImGui::Checkbox("useSmoothStep", &m_objectList[0]->materialConstantCPU.rim.useSmoothStep);
+			ImGui::CheckboxFlags("useSmoothStep", &m_objectList[0]->materialConstantCPU.rim.useSmoothStep, 1);
 			
 			ImGui::TreePop();
 		} 
 
 		if (ImGui::TreeNode("Fresnel")) {
-			ImGui::Checkbox("useFresnel", &m_objectList[0]->materialConstantCPU.fresnel.useFresnel);
+			ImGui::CheckboxFlags("useFresnel", &m_objectList[0]->materialConstantCPU.fresnel.useFresnel, 1);
 			ImGui::SliderFloat3("fresnelR0", &m_objectList[0]->materialConstantCPU.fresnel.fresnelR0.x, 0.0f, 1.0f);
 
 			ImGui::TreePop();
@@ -213,10 +215,11 @@ namespace Engine {
 
 			ImGui::TreePop();
 		} 
-
+		
 		if (ImGui::TreeNode("Texture")) {
-			ImGui::Checkbox("useTextureLOD", &m_objectList[0]->materialConstantCPU.useTextureLOD); 
-			ImGui::SliderFloat("mipLevel", &m_objectList[0]->materialConstantCPU.mipLevel, 0.0f, 10.0f); 
+			ImGui::CheckboxFlags("useTextureLOD", &m_objectList[0]->materialConstantCPU.texture.useTextureLOD, 1); 
+			ImGui::SliderFloat("mipLevel", &m_objectList[0]->materialConstantCPU.texture.mipLevel, 0.0f, 10.0f); 
+			ImGui::CheckboxFlags("useNormalMap", &m_objectList[0]->materialConstantCPU.texture.useNormalMap, 1); 
 
 			ImGui::TreePop(); 
 		}
