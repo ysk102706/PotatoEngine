@@ -37,7 +37,6 @@ float3 GetNormal(PSInput input)
 
 float4 main(PSInput input) : SV_TARGET
 { 
-    
     if (textureSetting.useAmbient)
     {
         return float4(mat.ambient, 1.0); 
@@ -66,18 +65,18 @@ float4 main(PSInput input) : SV_TARGET
     specular.xyz *= mat.specular; 
     
     if (fresnel.useFresnel)
-    { 
+    {
         specular.xyz *= SchlickFresnel_UnrealEngine4(fresnel.fresnelR0, VdotH);
     }
     
-    if (textureSetting.useTextureLOD) 
+    if (textureSetting.useTextureLOD)
     {
         diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, 10 * saturate((length(eyePos - input.posWorld) - 3) / 10.0));
     }
-    else 
+    else
     {
         diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, textureSetting.mipLevel);
-    } 
+    }
     
     return diffuse + specular; 
     

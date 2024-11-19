@@ -236,18 +236,31 @@ namespace Engine {
 
         float angleX = -XM_PI / 2;
         for (int i = 0; i <= row; i++) {
-            float angleY = 0;
+            float angleY = 0; 
             for (int j = 0; j <= column; j++) {
-                Vertex v;
+                Vertex v; 
 
-                v.position = Vector3(cos(angleY) * radius * cos(angleX), sin(angleX) * radius, sin(angleY) * radius * cos(angleX)); 
-                v.normal = Vector3(cos(angleY) * cos(angleX), sin(angleX), sin(angleY) * cos(angleX)); 
-                v.texcoord = Vector2(float(j) / column, 1 - float(i) / row);
+                float cosY = cos(angleY);
+                float sinY = sin(angleY);
+                float cosX = cos(angleX);
+                float sinX = sin(angleX);
+
+                v.position = Vector3(cosY * radius * cosX, sinX * radius, sinY * radius * cosX); 
+                v.normal = Vector3(cosY * cosX, sinX, sinY * cosX); 
+                v.texcoord = Vector2(float(j) / column, 1 - float(i) / row); 
+
+                Vector3 up = Vector3(0.0f, 1.0f, 0.0f); 
+                
+                Vector3 normalOrth = v.normal - up.Dot(v.normal) * v.normal; 
+                normalOrth.Normalize(); 
+
+                v.tangent = up.Cross(normalOrth); 
+                v.tangent.Normalize(); 
 
                 meshData.vertices.push_back(v);
 
                 angleY += thetaY;
-            }
+            } 
             angleX += thetaX;
         }
 
@@ -276,6 +289,14 @@ namespace Engine {
             v.normal = v.position;
             v.normal.Normalize(); 
             v.position = v.normal * radius; 
+
+            Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
+
+            Vector3 normalOrth = v.normal - up.Dot(v.normal) * v.normal;
+            normalOrth.Normalize();
+
+            v.tangent = up.Cross(normalOrth);
+            v.tangent.Normalize();
         }; 
 
         MeshData newMeshData;

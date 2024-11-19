@@ -9,5 +9,6 @@ namespace Engine {
 		std::vector<uint32_t> indices; 
 		std::string albedoTextureFile; 
 		std::string normalMapTextureFile; 
+		std::string heightMapTextureFile; 
 	};
 }

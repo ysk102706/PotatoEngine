@@ -1,27 +1,35 @@
 #include "Shader.hlsli"
 
+Texture2D heightMap : register(t0);
+
 cbuffer meshConstantData : register(b0) 
 {
     matrix world;
-    matrix invTranspose;
+    matrix invTranspose; 
+    int useHeightMap;
+    float3 dummy; 
 }; 
 
 PSInput main(VSInput input)
 {
     PSInput output;
-    output.pos = float4(input.pos, 1.0); 
+    output.pos = mul(float4(input.pos, 1.0), world); 
     
-    output.pos = mul(output.pos, world);
-    output.posWorld = output.pos;
+    output.normalWorld = normalize(mul(float4(input.normal, 0.0), invTranspose).xyz);
     
+    if (useHeightMap)
+    {
+        float height = heightMap.SampleLevel(linearClampSS, input.texcoord, 0.0).r; 
+        height = 2.0 * height - 1.0; 
+        output.pos += float4(height * output.normalWorld, 0.0);
+    }
+    
+    output.posWorld = output.pos.xyz; 
     output.pos = mul(output.pos, view);
     output.pos = mul(output.pos, proj);
     
-    output.normalWorld = mul(float4(input.normal, 0.0), invTranspose).xyz; 
-    normalize(output.normalWorld);
-    
     output.texcoord = input.texcoord; 
-    output.tangent = input.tangent; 
+    output.tangent = mul(float4(input.tangent, 0.0), world).xyz;
     
     return output;
 }

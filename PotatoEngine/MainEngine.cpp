@@ -11,7 +11,7 @@
 
 namespace Engine {
 
-	MainEngine::MainEngine() : EngineBase()
+	MainEngine::MainEngine() : EngineBase() 
 	{
 	}
 
@@ -37,21 +37,23 @@ namespace Engine {
 		m_envMap = std::make_shared<Model>(m_device, m_context, std::vector{ envMapMeshData }); 
 
 		{
-			Vector3 pos = Vector3(0.0f, 0.0f, 1.0f);
-			auto meshData = DefaultObjectGenerator::MakeSquareGrid(1.0f, 3, 2); 
+			Vector3 pos = Vector3(0.0f, 0.0f, 3.0f);
+			//auto meshData = DefaultObjectGenerator::MakeSquareGrid(1.0f, 3, 2); 
 			//auto meshData = DefaultObjectGenerator::MakeBox(1.0f);
 			//auto meshData = DefaultObjectGenerator::MakeCylinder(1.0f, 1.5f, 2.0f, 20, 5); 
-			//auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 50, 50);
+			auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 50, 50);
 			//auto meshData = DefaultObjectGenerator::ReadFromFile("../Resources/3D_Model/", "stanford_dragon.stl", false);
-			//meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
+			meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
 			//meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
 			//meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
-			meshData.albedoTextureFile = "../Resources/Texture/Bricks075A_1K-PNG/Bricks075A_1K_Color.png"; 
-			meshData.normalMapTextureFile = "../Resources/Texture/Bricks075A_1K-PNG/Bricks075A_1K_NormalDX.png"; 
+			meshData.albedoTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_diffuse.jpg"; 
+			meshData.normalMapTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_normal.jpg"; 
+			meshData.heightMapTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_height.jpg"; 
 			auto model = std::make_shared<Model>(m_device, m_context, std::vector{ meshData }); 
 			//auto model = std::make_shared<Model>(m_device, m_context, meshData); 
 			//model->isVisible = false; 
 			model->modelConstantCPU.world = Matrix::CreateTranslation(pos).Transpose(); 
+			model->materialConstantCPU.texture.invertNormalMapY = true; 
 			model->UpdateConstantBuffer(m_context); 
 
 			m_objectList.push_back(model); 
@@ -93,14 +95,21 @@ namespace Engine {
 		Vector3 dragTranslation;
 		if (MousePicking(m_objectBS, q, dragTranslation, pickPoint)) {  
 			Matrix& world = m_objectList[0]->modelConstantCPU.world; 
-			world = world.Transpose();
+			Matrix& inv = m_objectList[0]->modelConstantCPU.invTranspose; 
+			world = world.Transpose(); 
+
 			Vector3 translation = world.Translation();
 			world.Translation(Vector3(0.0f)); 
-			world = world * Matrix::CreateFromQuaternion(q) * Matrix::CreateTranslation(dragTranslation + translation); 
+
+			Matrix wr = world * Matrix::CreateFromQuaternion(q); 
+
+			world = wr * Matrix::CreateTranslation(dragTranslation + translation); 
+			inv = wr.Invert(); 
+
 			world = world.Transpose();
 			m_objectBS.Center = dragTranslation + translation; 
 
-			m_cursorSphere->modelConstantCPU.world =  Matrix::CreateTranslation(pickPoint).Transpose(); 
+			m_cursorSphere->modelConstantCPU.world = Matrix::CreateTranslation(pickPoint).Transpose(); 
 			m_cursorSphere->isVisible = true; 
 		}
 		else {
@@ -108,7 +117,7 @@ namespace Engine {
 		}
 
 		for (auto& a : m_objectList) {
-			a->UpdateConstantBuffer(m_context);
+			a->UpdateConstantBuffer(m_context); 
 		}
 
 		postProcess.samplingFilter.UpdateConstantBuffer(m_context);
@@ -220,6 +229,7 @@ namespace Engine {
 			ImGui::CheckboxFlags("useTextureLOD", &m_objectList[0]->materialConstantCPU.texture.useTextureLOD, 1); 
 			ImGui::SliderFloat("mipLevel", &m_objectList[0]->materialConstantCPU.texture.mipLevel, 0.0f, 10.0f); 
 			ImGui::CheckboxFlags("useNormalMap", &m_objectList[0]->materialConstantCPU.texture.useNormalMap, 1); 
+			ImGui::CheckboxFlags("useHeightMap", &m_objectList[0]->modelConstantCPU.useHeightMap, 1); 
 
 			ImGui::TreePop(); 
 		}

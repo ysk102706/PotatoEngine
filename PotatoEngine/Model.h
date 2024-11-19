@@ -49,6 +49,8 @@ namespace Engine
 	struct ModelConstantData {
 		Matrix world; 
 		Matrix invTranspose; 
+		int useHeightMap; 
+		Vector3 dummy; 
 	}; 
 
 	struct MaterialConstantData { 
