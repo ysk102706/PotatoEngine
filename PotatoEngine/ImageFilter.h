@@ -13,6 +13,10 @@ namespace Engine
 		Vector2 pixelDelta; 
 		float bloomStrength;
 		float threshold; 
+		int useToneMapping; 
+		float exposure; 
+		float gamma; 
+		float dummy; 
 	};
 
 	class ImageFilter { 
@@ -33,7 +37,7 @@ namespace Engine
 		
 		ImageFilterConstantData imageFilterConstantCPU; 
 
-		bool useSamplingFilter;
+		int useSamplingFilter;
 
 	private: 
 		D3D11_VIEWPORT viewport; 

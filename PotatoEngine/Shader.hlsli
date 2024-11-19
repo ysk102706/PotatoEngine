@@ -70,6 +70,10 @@ cbuffer PostProcessConstantData : register(b2)
     float2 pixelDelta;
     float bloomStrength; 
     float threshold; 
+    int useToneMapping; 
+    float exposure; 
+    float gamma; 
+    float dummy1;  
 };
 
 struct VSInput

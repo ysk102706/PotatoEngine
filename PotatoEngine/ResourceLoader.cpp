@@ -85,7 +85,7 @@ namespace Engine {
 		ZeroMemory(&td, sizeof(td));
 		td.Width = width;
 		td.Height = height;
-		td.MipLevels = 0;
+		td.MipLevels = 0; 
 		td.ArraySize = 1;
 		td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		td.SampleDesc.Count = 1;

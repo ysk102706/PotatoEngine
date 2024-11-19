@@ -183,5 +183,8 @@
     <None Include="FresnelEffect.hlsli">
       <Filter>Shader</Filter>
     </None>
+    <None Include="ToneMapping.hlsli">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

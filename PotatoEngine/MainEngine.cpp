@@ -30,7 +30,8 @@ namespace Engine {
 		auto tq = DefaultObjectGenerator::MakeTessellationQuad();
 		tessellationQuad.Initialize(m_device, m_context, tq); 
 
-		CreateCubeMap(L"../Resources/Texture/CubeMap/", L"SampleEnvMDR.dds", L"SampleDiffuseMDR.dds", L"SampleSpecularMDR.dds");
+		//CreateCubeMap(L"../Resources/Texture/CubeMap/", L"SampleEnvMDR.dds", L"SampleDiffuseMDR.dds", L"SampleSpecularMDR.dds");
+		CreateCubeMap(L"../Resources/Texture/CubeMap/", L"SampleEnvHDR.dds", L"SampleDiffuseHDR.dds", L"SampleSpecularHDR.dds");
 		
 		MeshData envMapMeshData = DefaultObjectGenerator::MakeBox(40.0f); 
 		std::reverse(envMapMeshData.indices.begin(), envMapMeshData.indices.end()); 
@@ -220,10 +221,13 @@ namespace Engine {
 		}
 		
 		if (ImGui::TreeNode("PostProcess")) { 
-			ImGui::Checkbox("useSampling", &postProcess.samplingFilter.useSamplingFilter); 
+			ImGui::CheckboxFlags("useSampling", &postProcess.samplingFilter.useSamplingFilter, 1); 
 			ImGui::SliderFloat("strength", &postProcess.combineFilter.imageFilterConstantCPU.bloomStrength, 0.0, 1.0);
+			ImGui::CheckboxFlags("useToneMapping", &postProcess.combineFilter.imageFilterConstantCPU.useToneMapping, 1); 
+			ImGui::SliderFloat("exposure", &postProcess.combineFilter.imageFilterConstantCPU.exposure, 0.0, 3.0);
+			ImGui::SliderFloat("gamma", &postProcess.combineFilter.imageFilterConstantCPU.gamma, 0.0, 10.0);
 
-			ImGui::TreePop();
+			ImGui::TreePop(); 
 		} 
 		
 		if (ImGui::TreeNode("Texture")) {
