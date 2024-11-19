@@ -48,6 +48,10 @@ namespace Engine
 				ResourceLoader::CreateTexture(device, context, a.heightMapTextureFile, newMesh->heightMapTexture, newMesh->heightMapSRV);
 			}
 
+			if (!a.AOTextureFile.empty()) {
+				ResourceLoader::CreateTexture(device, context, a.AOTextureFile, newMesh->AOTexture, newMesh->AOSRV);
+			}
+
 			newMesh->vertexConstantBuffer = modelConstantGPU;
 			newMesh->pixelConstantBuffer = materialConstantGPU;
 
@@ -68,7 +72,7 @@ namespace Engine
 				context->VSSetShaderResources(0, VSSRVs.size(), VSSRVs.data());
 
 				std::vector<ID3D11ShaderResourceView*> PSSRVs = {
-					a->albedoSRV.Get(), a->normalMapSRV.Get()
+					a->albedoSRV.Get(), a->normalMapSRV.Get(), a->AOSRV.Get() 
 				};
 				context->PSSetShaderResources(0, PSSRVs.size(), PSSRVs.data());
 

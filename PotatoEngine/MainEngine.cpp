@@ -49,6 +49,7 @@ namespace Engine {
 			meshData.albedoTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_diffuse.jpg"; 
 			meshData.normalMapTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_normal.jpg"; 
 			meshData.heightMapTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_height.jpg"; 
+			meshData.AOTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_ao.jpg"; 
 			auto model = std::make_shared<Model>(m_device, m_context, std::vector{ meshData }); 
 			//auto model = std::make_shared<Model>(m_device, m_context, meshData); 
 			//model->isVisible = false; 
@@ -230,6 +231,7 @@ namespace Engine {
 			ImGui::SliderFloat("mipLevel", &m_objectList[0]->materialConstantCPU.texture.mipLevel, 0.0f, 10.0f); 
 			ImGui::CheckboxFlags("useNormalMap", &m_objectList[0]->materialConstantCPU.texture.useNormalMap, 1); 
 			ImGui::CheckboxFlags("useHeightMap", &m_objectList[0]->modelConstantCPU.useHeightMap, 1); 
+			ImGui::CheckboxFlags("useAO", &m_objectList[0]->materialConstantCPU.texture.useAO, 1); 
 
 			ImGui::TreePop(); 
 		}

@@ -10,5 +10,6 @@ namespace Engine {
 		std::string albedoTextureFile; 
 		std::string normalMapTextureFile; 
 		std::string heightMapTextureFile; 
+		std::string AOTextureFile; 
 	};
 }

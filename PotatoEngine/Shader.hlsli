@@ -52,7 +52,8 @@ struct TextureSetting
     float mipLevel; 
     int useNormalMap; 
     int invertNormalMapY; 
-    float3 dummy; 
+    int useAO; 
+    float2 dummy; 
 };
 
 cbuffer globalConstantData : register(b1)

@@ -5,6 +5,7 @@
 
 Texture2D Tex : register(t0); 
 Texture2D normalMap : register(t1); 
+Texture2D AOTex : register(t2); 
 
 cbuffer MaterialConstantData : register(b0) 
 {
@@ -76,6 +77,11 @@ float4 main(PSInput input) : SV_TARGET
     else
     {
         diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, textureSetting.mipLevel);
+    }
+    
+    if (textureSetting.useAO)
+    {
+        diffuse *= AOTex.Sample(linearWarpSS, input.texcoord).r;
     }
     
     return diffuse + specular; 

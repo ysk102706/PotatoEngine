@@ -42,8 +42,9 @@ namespace Engine
 		int useTextureLOD; 
 		float mipLevel;
 		int useNormalMap;
-		int invertNormalMapY;
-		Vector3 dummy;
+		int invertNormalMapY; 
+		int useAO; 
+		Vector2 dummy;
 	};
 
 	struct ModelConstantData {
