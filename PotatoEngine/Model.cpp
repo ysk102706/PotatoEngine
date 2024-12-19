@@ -19,10 +19,10 @@ namespace Engine
 
 	void Engine::Model::Initialize(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context, const std::vector<MeshData>& meshData)
 	{
-		modelConstantCPU.world = modelConstantCPU.invTranspose = Matrix(); 
-		
 		ZeroMemory(&modelConstantCPU, sizeof(modelConstantCPU)); 
 		ZeroMemory(&materialConstantCPU, sizeof(materialConstantCPU));
+
+		modelConstantCPU.world = modelConstantCPU.invTranspose = Matrix(); 
 
 		D3D11Utils::CreateConstantBuffer(device, modelConstantCPU, modelConstantGPU);
 		D3D11Utils::CreateConstantBuffer(device, materialConstantCPU, materialConstantGPU);

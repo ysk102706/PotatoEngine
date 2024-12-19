@@ -82,7 +82,7 @@ float4 main(PSInput input) : SV_TARGET
     }
     else
     {
-        //diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, textureSetting.mipLevel);
+        diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, textureSetting.mipLevel);
     }
     
     if (textureSetting.useAO)
