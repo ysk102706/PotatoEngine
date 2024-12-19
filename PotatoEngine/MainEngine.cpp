@@ -38,29 +38,30 @@ namespace Engine {
 		m_envMap = std::make_shared<Model>(m_device, m_context, std::vector{ envMapMeshData }); 
 
 		{
-			Vector3 pos = Vector3(0.0f, 0.0f, 3.0f);
+			Vector3 pos = Vector3(0.0f, 0.0f, 0.0f);
 			//auto meshData = DefaultObjectGenerator::MakeSquareGrid(1.0f, 3, 2); 
 			//auto meshData = DefaultObjectGenerator::MakeBox(1.0f);
 			//auto meshData = DefaultObjectGenerator::MakeCylinder(1.0f, 1.5f, 2.0f, 20, 5); 
-			auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 50, 50);
-			//auto meshData = DefaultObjectGenerator::ReadFromFile("../Resources/3D_Model/", "stanford_dragon.stl", false);
-			meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
+			//auto meshData = DefaultObjectGenerator::MakeSphere(2.0f, 50, 50);
+			auto meshData = DefaultObjectGenerator::ReadFromFile("../Resources/3D_Model/", "stanford_dragon.stl", false);
+			//meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
 			//meshData = DefaultObjectGenerator::SubdivideToSphere(1.5f, meshData);
 			//meshData.albedoTextureFile = "../Resources/Texture/hanbyeol.png";
-			meshData.albedoTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_diffuse.jpg"; 
-			meshData.normalMapTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_normal.jpg"; 
-			meshData.heightMapTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_height.jpg"; 
-			meshData.AOTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_ao.jpg"; 
-			auto model = std::make_shared<Model>(m_device, m_context, std::vector{ meshData }); 
-			//auto model = std::make_shared<Model>(m_device, m_context, meshData); 
+			//meshData.albedoTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_diffuse.jpg"; 
+			//meshData.normalMapTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_normal.jpg"; 
+			//meshData.heightMapTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_height.jpg"; 
+			//meshData.AOTextureFile = "../Resources/Texture/cgaxis_grey_porous_rock_40_56_4K/grey_porous_rock_40_56_ao.jpg"; 
+			//auto model = std::make_shared<Model>(m_device, m_context, std::vector{ meshData }); 
+			auto model = std::make_shared<Model>(m_device, m_context, meshData); 
 			//model->isVisible = false; 
-			model->modelConstantCPU.world = Matrix::CreateTranslation(pos).Transpose(); 
+			model->modelConstantCPU.world = (Matrix::CreateRotationX(90 * DirectX::XM_PI / 180) * Matrix::CreateTranslation(pos)).Transpose();
+			model->modelConstantCPU.invTranspose = Matrix::CreateRotationX(90 * DirectX::XM_PI / 180).Invert(); 
 			model->materialConstantCPU.texture.invertNormalMapY = true; 
 			model->UpdateConstantBuffer(m_context); 
 
 			m_objectList.push_back(model); 
 
-			//m_objectBS = DirectX::BoundingSphere(pos, 1.5f); 
+			m_objectBS = DirectX::BoundingSphere(pos, 0.0f); 
 		}
 
 		{
@@ -195,7 +196,7 @@ namespace Engine {
 		if (ImGui::TreeNode("Phong")) {
 			ImGui::SliderFloat("diffuse", &GUI::diffuse, 0.0f, 3.0f);
 			ImGui::SliderFloat("specular", &GUI::specular, 0.0f, 3.0f);
-			ImGui::SliderFloat("shininess", &m_objectList[0]->materialConstantCPU.mat.shininess, 0.0f, 20.0f);
+			ImGui::SliderFloat("shininess", &m_objectList[0]->materialConstantCPU.mat.shininess, 0.0f, 256.0f);
 			
 			ImGui::TreePop();
 		}

@@ -227,34 +227,34 @@ namespace Engine {
 
 	void UpdateNormal() 
 	{ 
-		std::vector<Vector3> normalSum(ModelLoad::meshes.size(), Vector3(0.0f));
-		std::vector<int> normalCount(ModelLoad::meshes.size(), 0);
+		for (auto& a : ModelLoad::meshes) {
+			std::vector<Vector3> normalSum(a.vertices.size(), Vector3(0.0f));
+			std::vector<float> normalCount(a.vertices.size(), 0);
 
-		for (auto& a : ModelLoad::meshes) { 
-			for (int i = 0; i < a.indices.size(); i += 3) { 
+			for (int i = 0; i < a.indices.size(); i += 3) {
 				int i1 = a.indices[i];
 				int i2 = a.indices[i + 1];
-				int i3 = a.indices[i + 2]; 
+				int i3 = a.indices[i + 2];
 
 				Vertex v1 = a.vertices[i1];
 				Vertex v2 = a.vertices[i2];
-				Vertex v3 = a.vertices[i3]; 
-				
-				Vector3 faceNormal = (v2.normal - v1.normal).Cross(v3.normal - v1.normal); 
+				Vertex v3 = a.vertices[i3];
+
+				Vector3 faceNormal = (v2.position - v1.position).Cross(v3.position - v1.position);
 
 				normalSum[i1] += faceNormal;
 				normalSum[i2] += faceNormal;
-				normalSum[i3] += faceNormal; 
+				normalSum[i3] += faceNormal;
 
 				normalCount[i1]++;
 				normalCount[i2]++;
 				normalCount[i3]++;
-			} 
+			}
 
-			for (int i = 0; i < a.vertices.size(); i++) { 
+			for (int i = 0; i < a.vertices.size(); i++) {
 				if (normalCount[i]) {
-					a.vertices[i].normal = normalSum[i] / normalCount[i]; 
-					a.vertices[i].normal.Normalize(); 
+					a.vertices[i].normal = normalSum[i] / normalCount[i];
+					a.vertices[i].normal.Normalize();
 				}
 			}
 		}
@@ -308,8 +308,8 @@ namespace Engine {
 			Matrix tr; 
 			ProcessNode(scene->mRootNode, scene, tr); 
 
-			UpdateNormal(); 
-			UpdateTangent(); 
+			//UpdateNormal(); 
+			//UpdateTangent(); 
 		}
 		else std::cout << "Failed to read file " << path + filename << '\n';
 

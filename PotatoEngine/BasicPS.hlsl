@@ -56,6 +56,12 @@ float4 main(PSInput input) : SV_TARGET
     
     color += DirectionalLight(light, toEye, normal, mat); 
     
+    if (rim.useRim)
+    {
+        color += Rim(rim, toEye, normal); 
+        return float4(color, 1.0); 
+    } 
+    
     float4 diffuse = diffuseTex.Sample(linearWarpSS, normal) + float4(color, 0.0); 
     //float4 diffuse = float4(color, 1.0); 
     float4 specular = specularTex.Sample(linearWarpSS, reflect(-toEye, normal));
@@ -68,15 +74,15 @@ float4 main(PSInput input) : SV_TARGET
     if (fresnel.useFresnel)
     {
         specular.xyz *= SchlickFresnel_UnrealEngine4(fresnel.fresnelR0, VdotH);
-    }
+    } 
     
     if (textureSetting.useTextureLOD)
     {
         diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, 10 * saturate((length(eyePos - input.posWorld) - 3) / 10.0));
     }
-    else 
+    else
     {
-        diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, textureSetting.mipLevel);
+        //diffuse *= Tex.SampleLevel(linearWarpSS, input.texcoord, textureSetting.mipLevel);
     }
     
     if (textureSetting.useAO)

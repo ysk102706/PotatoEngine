@@ -76,7 +76,7 @@ namespace Engine {
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 	
-	EngineBase::EngineBase() : width(2880), height(1800), m_window(0), m_viewport(D3D11_VIEWPORT())
+	EngineBase::EngineBase() : width(1440), height(900), m_window(0), m_viewport(D3D11_VIEWPORT())
 	{
 	}
 
